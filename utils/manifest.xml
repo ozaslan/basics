@@ -1,0 +1,18 @@
+<package>
+  <description brief="utils">
+     Utilities library for 
+	- rotation transformations
+	- laser scan processing
+	- ...
+  </description>
+  <author>Salih Tolga Ozaslan</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/utilities</url>
+  <depend package="roscpp"/>
+  <depend package="sensor_msgs"/>
+  <rosdep name="eigen" />
+  <export>
+	<cpp cflags="-I${prefix}/include" lflags="-L${prefix}/lib -lutils"/> 
+  </export>
+</package>
