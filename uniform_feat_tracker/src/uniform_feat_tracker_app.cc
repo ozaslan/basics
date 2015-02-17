@@ -10,8 +10,8 @@ ros::Subscriber image_subs;
 ros::Publisher  image_publ;
 
 cv_bridge::CvImagePtr image_msg;
-UniformFeatureExtractor unif_feat_extractor("fast", 3, 100, Size2i(4, 3), 9, true);
-UniformFeatureTracker unif_feat_tracker(100, 13);
+UniformFeatureExtractor unif_feat_extractor("fast", 3, 150, Size2i(4, 3), 9, true);
+UniformFeatureTracker unif_feat_tracker(150, 13);
 
 int  setup_messaging_interface(ros::NodeHandle &n);
 void image_callback(const sensor_msgs::Image &msg);
@@ -69,7 +69,14 @@ void image_callback(const sensor_msgs::Image &msg)
 		return;
 	}
 
-	unif_feat_tracker.track_features(image_msg->image, unif_feat_extractor);
+  cv::Mat img;
+  
+  if(image_msg->image.channels() == 3)
+    cv::cvtColor(image_msg->image, img, CV_BGR2GRAY);
+  else
+    img = image_msg->image;
+
+	unif_feat_tracker.track_features(img, unif_feat_extractor);
 	unif_feat_tracker.plot_flow(image_msg->image, true, true);
 
 	publish_image();

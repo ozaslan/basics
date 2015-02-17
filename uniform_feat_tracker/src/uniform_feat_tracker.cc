@@ -94,6 +94,8 @@ int UniformFeatureTracker::_initialize(){
 
 int UniformFeatureTracker::track_features(cv::Mat &img, UniformFeatureExtractor &unifFeatExt){
 
+	assert(img.channels() == 1);
+
 	_image_size.width  = img.cols;
 	_image_size.height = img.rows;
 	
