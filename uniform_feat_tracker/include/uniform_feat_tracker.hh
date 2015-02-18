@@ -75,7 +75,7 @@ public:
 	// This function tracks previously extracted features into the given 
 	// new frame. It also adds new features as long as there is still room 
 	// to reach to '_max_num_feats'
-	int track_features(cv::Mat &img, UniformFeatureExtractor &unifFeatExt);
+	int track_features(const cv::Mat &img, UniformFeatureExtractor &unifFeatExt);
 	// This functions plots the OF trailers when 'plot_flow = true' and the
 	// corresponding features in the last frame if 'plot_feats = true' onto
 	// the given image 'img'.

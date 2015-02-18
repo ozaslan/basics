@@ -37,12 +37,13 @@ UniformFeatureTracker::UniformFeatureTracker(int max_num_feats, int max_hist_len
 }
 
 int UniformFeatureTracker::_initialize(){
-	
+	_winSize = Size2i(21, 21);
+	_max_pyra_level = 3;
+
 	_frames.resize(_max_hist_len);
 	_is_initialized.resize(_max_hist_len);
 	_feat_history_grid.clear();
 	_feat_history_grid.resize(_max_hist_len);
-	
 	for(int i = 0 ; i < _max_hist_len ; i++){
 		_feat_history_grid[i].resize(_max_num_feats);
 		_frames[i].resize(_max_pyra_level);
@@ -84,15 +85,13 @@ int UniformFeatureTracker::_initialize(){
 		_feat_colors[i] = Scalar(b, g, r);
 	}
 	
-	_winSize = Size2i(21, 21);
-	_max_pyra_level = 3;
 	
 	_criteria = TermCriteria(TermCriteria::COUNT+TermCriteria::EPS, 30, 0.01);
 	
 	return 0;
 }
 
-int UniformFeatureTracker::track_features(cv::Mat &img, UniformFeatureExtractor &unifFeatExt){
+int UniformFeatureTracker::track_features(const cv::Mat &img, UniformFeatureExtractor &unifFeatExt){
 
 	assert(img.channels() == 1);
 
@@ -304,6 +303,7 @@ int UniformFeatureTracker::_eliminate_outliers(){
 	return 0;
 }
 
+// ### This function needs more thinking!!!
 // ### This may need more work. I will see insh. what I need when I progress 
 // in mapping (maybe use bundle adjustment)
 int UniformFeatureTracker::get_features(vector<Point2d> &features, vector<int> &feat_ids, int lifetime){
