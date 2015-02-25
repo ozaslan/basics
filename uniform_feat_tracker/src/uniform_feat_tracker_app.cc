@@ -35,11 +35,11 @@ int setup_messaging_interface(ros::NodeHandle &n)
 {
 	if(debug_mode)	{
 		ROS_INFO("UNIF FEAT TRACKER APP : setting up messaging interface.");
-		ROS_INFO(" --- Listening  : /cam0/image");
+		ROS_INFO(" --- Listening  : /cam2/image");
 		ROS_INFO(" --- Publishing : /uniform_flows");
 	}
 		
-	image_subs  = n.subscribe("/cam0/image", 10, image_callback, ros::TransportHints().tcpNoDelay());
+	image_subs  = n.subscribe("/cam2/image", 10, image_callback, ros::TransportHints().tcpNoDelay());
 	image_publ  = n.advertise<sensor_msgs::Image>("/uniform_flows", 10);
 
 	return 0;
@@ -76,7 +76,13 @@ void image_callback(const sensor_msgs::Image &msg)
   else
     img = image_msg->image;
 
-	unif_feat_tracker.track_features(img, unif_feat_extractor);
+	cv::Mat mask = cv::imread("/home/ozaslan/Research/ros_ws/calibration/calib_data/camera/ins_khex_right_cam_mask.png");
+	if(mask.channels() != 0)
+		cv::cvtColor(mask, mask, CV_BGR2GRAY);
+
+	//cout << mask << endl;
+
+	unif_feat_tracker.track_features(img, unif_feat_extractor, mask);
 	unif_feat_tracker.plot_flow(image_msg->image, true, true);
 
 	publish_image();

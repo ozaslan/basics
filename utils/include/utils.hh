@@ -24,7 +24,15 @@ using namespace Eigen;
 
 namespace Eigen{
 	typedef Eigen::Matrix<double, 6, 6> Matrix6d;
+	typedef Eigen::Matrix<double, 6, 1> Vector6d;
 }
+
+#define ASSERT(condition, message) \
+    if (! (condition)) { \
+        std::cerr << "Assertion `" #condition "` failed in " << __FILE__ \
+                    << " line " << __LINE__ << ": " << message << std::endl; \
+                    std::exit(EXIT_FAILURE); \
+    } \
 
 namespace utils{
 

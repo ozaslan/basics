@@ -10,6 +10,7 @@
   <review status="release" notes="released"/>
   <url>http://ros.org/wiki/uniform_feat_extractor</url>
   <depend package="roscpp"/>
+  <depend package="utils"/>
   <depend package="sensor_msgs"/>
   <depend package="cv_bridge"/>
   

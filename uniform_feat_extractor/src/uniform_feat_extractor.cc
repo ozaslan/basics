@@ -53,7 +53,8 @@ UniformFeatureExtractor::UniformFeatureExtractor(string detector_type, double mi
 	set_plotting_params();
 }
 
-int UniformFeatureExtractor::extract_features(cv::Mat &img, vector<Point2f> &features){
+int UniformFeatureExtractor::extract_features(const cv::Mat &img, vector<Point2f> &features, const cv::Mat &mask){
+  ASSERT(mask.size() == cv::Size(0, 0) || mask.size() == img.size(), "mask and image must have same sizes")
 
 	features.reserve(_max_num_feats);
 	static vector<KeyPoint> keypoints;
@@ -65,7 +66,9 @@ int UniformFeatureExtractor::extract_features(cv::Mat &img, vector<Point2f> &fea
 	// Prepare mask. OpenCV expects points of interest to be marked with
 	// some non-zero value. We first check if _mask is already allocated.
 	// Then set to a non-zero value by default.
-	if(_mask.cols != img.cols || _mask.rows != img.rows)
+	if(mask.size() != cv::Size(0, 0))
+		mask.copyTo(_mask);
+	else if(_mask.cols != img.cols || _mask.rows != img.rows)
 		_mask = cv::Mat::ones(img.rows, img.cols, CV_8U);
 	else
 		_mask.setTo(Scalar(1));
@@ -98,6 +101,8 @@ int UniformFeatureExtractor::extract_features(cv::Mat &img, vector<Point2f> &fea
 	// (*) Then starting from the patch which has the least features, 
 	// add new keypoints to the output list.
 	for(int i = 0 ; i < 13 && (int)features.size() < _max_num_feats ; i++){
+	  if(_mask.at<char>(keypoints[i].pt.y, keypoints[i].pt.x) == 0)
+	      continue;
 		features.push_back(keypoints[i].pt);
 		if(is_fast)
 			circle(_mask, keypoints[i].pt, _min_dist, 0, -1);

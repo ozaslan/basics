@@ -67,7 +67,7 @@ private:
 	
 
 	int _initialize();							// initializes paramters, allocates memory etc.
-	int _eliminate_outliers();					// 
+	int _eliminate_outliers(const cv::Mat &mask);// 
 public:
 	// This constructor gets the maximum number of features to be tracked
 	// and the length of the history.
@@ -75,7 +75,7 @@ public:
 	// This function tracks previously extracted features into the given 
 	// new frame. It also adds new features as long as there is still room 
 	// to reach to '_max_num_feats'
-	int track_features(const cv::Mat &img, UniformFeatureExtractor &unifFeatExt);
+	int track_features(const cv::Mat &img, UniformFeatureExtractor &unifFeatExt, const cv::Mat &mask = cv::Mat(0, 0, CV_8U));
 	// This functions plots the OF trailers when 'plot_flow = true' and the
 	// corresponding features in the last frame if 'plot_feats = true' onto
 	// the given image 'img'.

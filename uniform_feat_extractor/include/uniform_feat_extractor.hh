@@ -2,6 +2,7 @@
 #define _UNIF_FEAT_EXTRACTOR_H_
 
 #include <opencv2/opencv.hpp>
+#include <utils.hh>
 
 #include <iostream>
 #include <vector>
@@ -66,7 +67,7 @@ public:
 	// to eachother more than '_min_dist_between_feats' pixels and the number of features is 
 	// not greater than '_max_num_feats'. Also, this function tries to evenly distrubute the 
 	// features to the grid/patches.
-	int extract_features(cv::Mat &img, vector<Point2f> &features);
+	int extract_features(const cv::Mat &img, vector<Point2f> &features, const cv::Mat &mask = cv::Mat(0, 0, CV_8U));
 	// This function sets the parameters that 'plot_features(...)' uses for visualization
 	// radius := radius of the feature
 	// thickness := Thickness of the circle. Negative values fills the circle

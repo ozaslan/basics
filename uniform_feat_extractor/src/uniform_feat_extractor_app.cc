@@ -70,7 +70,7 @@ void image_callback(const sensor_msgs::Image &msg)
 	static vector<Point2f> features;
 	std::random_shuffle(features.begin(), features.end());
 	features.resize(features.size() * 0);
-	
+
 	unif_feat_detector.extract_features(image_msg->image, features);
 	unif_feat_detector.plot_features(image_msg->image, features, true);
 	publish_image();

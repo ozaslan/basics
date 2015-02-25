@@ -91,9 +91,11 @@ int UniformFeatureTracker::_initialize(){
 	return 0;
 }
 
-int UniformFeatureTracker::track_features(const cv::Mat &img, UniformFeatureExtractor &unifFeatExt){
+int UniformFeatureTracker::track_features(const cv::Mat &img, UniformFeatureExtractor &unifFeatExt, const cv::Mat &mask){
 
-	assert(img.channels() == 1);
+	ASSERT(img.channels() == 1, "Image has to be single channel");
+  ASSERT(mask.size() == cv::Size(0, 0) || mask.size() == img.size(), "Image and mask sizes has to be the same.")
+  ASSERT(mask.channels() == 1, "Mask has to be a single channel matrix")
 
 	_image_size.width  = img.cols;
 	_image_size.height = img.rows;
@@ -159,7 +161,7 @@ int UniformFeatureTracker::track_features(const cv::Mat &img, UniformFeatureExtr
 
 	debug_msg("A3")
 	// Eliminate outliers using expected stability in the tracked feature locations.
-	_eliminate_outliers();
+	_eliminate_outliers(mask);
 
 	// Done with tracking existing features. Elhm.
 	// ********************** INITIALIZE NEW FEATURES ************************//
@@ -174,7 +176,7 @@ int UniformFeatureTracker::track_features(const cv::Mat &img, UniformFeatureExtr
 			if(_start_frame_idx[i] != -1)
 				features[j++]= _feat_history_grid[_curr_frame_idx][i];	
 		//cout << "# of features before : " << features.size() << endl;
-		unifFeatExt.extract_features(img, features);
+		unifFeatExt.extract_features(img, features, mask);
 		//cout << "# of features after  : " << features.size() << endl;
 	}
 
@@ -246,13 +248,27 @@ int UniformFeatureTracker::plot_flow(cv::Mat &img, bool plot_flow, bool plot_fea
 	return 0;
 }
 
-int UniformFeatureTracker::_eliminate_outliers(){
-	// Eliminate flow trails with unexpectedly large flow vectors
+int UniformFeatureTracker::_eliminate_outliers(const cv::Mat &mask){
+	// Also eliminate flow trails with unexpectedly large flow vectors
+	bool mask_available = mask.cols * mask.rows != 0;
 	for(int i = 0 ; i < _max_num_feats ; i++){
 		if(_start_frame_idx[i] < 0 || _start_frame_idx[i] == _curr_frame_idx)
 			continue;
 		Point2f &pt_curr = _feat_history_grid[_curr_frame_idx][i];
 		Point2f &pt_prev = _feat_history_grid[_prev_frame_idx][i];
+		// If point is out of the image plane, remove it.
+		if(pt_curr.x < 0 || pt_curr.y < 0 || pt_curr.x > _image_size.width || pt_curr.y > _image_size.height){
+        _start_frame_idx[i] = -1;
+        _num_tracked_feats--;
+        continue;
+		}
+    // Stop tracking features which correspond to masked region
+		if(mask_available == true && mask.at<char>(pt_curr.y, pt_curr.x) == 0){
+		    _start_frame_idx[i] = -1;
+        _num_tracked_feats--;
+        continue;
+    }
+
 		if(fabs(pt_curr.x - pt_prev.x) > _max_flow_rate || fabs(pt_curr.y - pt_prev.y) > _max_flow_rate ||
 			pt_curr.x < 0 || pt_curr.x >= _image_size.width ||
 			pt_curr.y < 0 || pt_curr.y >= _image_size.height) {
@@ -284,16 +300,16 @@ int UniformFeatureTracker::_eliminate_outliers(){
 		flow_lengths.push_back(len);
 	}
 	
-	double sum = std::accumulate(flow_lengths.begin(), flow_lengths.end(), 0.0);
-	double mean = sum / flow_lengths.size();
+	double flow_sum = std::accumulate(flow_lengths.begin(), flow_lengths.end(), 0.0);
+	double flow_mean = flow_sum / flow_lengths.size();
 
 	double sq_sum = std::inner_product(flow_lengths.begin(), flow_lengths.end(), flow_lengths.begin(), 0.0);
-	double stdev = std::sqrt(sq_sum / flow_lengths.size() - mean * mean);
+	double stdev = std::sqrt(sq_sum / flow_lengths.size() - flow_mean * flow_mean);
 	
 	for(int i = 0, j = 0 ; i < _max_num_feats ; i++) {
 		if(_start_frame_idx[i] < 0)
 			continue;
-		if(flow_lengths[j] - mean >= _num_stddevs * stdev) {
+		if(flow_lengths[j] - flow_mean >= _num_stddevs * stdev) {
 			_start_frame_idx[i] = -1;
 			_num_tracked_feats--;
 		}
