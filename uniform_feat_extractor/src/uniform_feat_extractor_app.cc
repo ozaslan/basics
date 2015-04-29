@@ -15,7 +15,7 @@ int  setup_messaging_interface(ros::NodeHandle &n);
 void image_callback(const sensor_msgs::Image &msg);
 int  publish_image();
 
-bool debug_mode = false;
+bool debug_mode = true;
 
 int main(int argc, char** argv)
 {
@@ -33,11 +33,11 @@ int setup_messaging_interface(ros::NodeHandle &n)
 {
 	if(debug_mode)	{
 		ROS_INFO("UNIF FEAT EXTRACTOR APP : setting up messaging interface.");
-		ROS_INFO(" --- Listening  : /cam2/image");
+		ROS_INFO(" --- Listening  : /cam3/image");
 		ROS_INFO(" --- Publishing : /uniform_feats");
 	}
 		
-	image_subs  = n.subscribe("/cam2/image", 10, image_callback, ros::TransportHints().tcpNoDelay());
+	image_subs  = n.subscribe("/cam3/image", 10, image_callback, ros::TransportHints().tcpNoDelay());
 	image_publ  = n.advertise<sensor_msgs::Image>("/uniform_feats", 10);
 
 	return 0;

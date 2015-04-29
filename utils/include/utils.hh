@@ -1,8 +1,14 @@
-#ifndef _UTILS_HH_
-#define _UTILS_HH_
+/*
+   This header file defines a set of mathematics utility 
+   functions. Additionally, other header files which define
+   further utility functions such as representation transformations,
+   lidar data processing. The user should include this header file
+   to benefit from all the utiity function while keeping in mind
+   the namespace structure.
+ */
 
 #ifndef PI
-	#define PI 3.14159265359
+#define PI 3.14159265359
 #endif
 
 #include <cmath>
@@ -10,99 +16,85 @@
 #include <vector>
 #include <cassert>
 #include <iostream>
-      
+
 #include <ros/ros.h>
 #include <Eigen/Core>
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 
+#include <nav_msgs/Odometry.h>
+#include <sensor_msgs/Imu.h>
 #include <sensor_msgs/LaserScan.h>
 #include <sensor_msgs/PointCloud2.h>
+
+#include <opencv2/opencv.hpp>
+
+#include "trans_utils.hh"
+#include "laser_utils.hh"
 
 using namespace std;
 using namespace Eigen;
 
+// Putting this header lock at the beginning of the file prevents
+// including the library headers in the preamble of this file.
+// However functions in the "trans_utils" and "laser_utils" headers
+// utilizes these libraries.
+
+#ifndef _UTILS_HH_
+#define _UTILS_HH_
+
+// Define new Eigen matrix and vector types
 namespace Eigen{
 	typedef Eigen::Matrix<double, 6, 6> Matrix6d;
 	typedef Eigen::Matrix<double, 6, 1> Vector6d;
 }
 
+// This macro provides an efficient way to raise exceptions with
+// very informative command line messages.
 #define ASSERT(condition, message) \
-    if (! (condition)) { \
-        std::cerr << "Assertion `" #condition "` failed in " << __FILE__ \
-                    << " line " << __LINE__ << ": " << message << std::endl; \
-                    std::exit(EXIT_FAILURE); \
-    } \
+	if (! (condition)) { \
+		std::cerr << "Assertion `" #condition "` failed in " << __FILE__ \
+		<< " line " << __LINE__ << ": " << message << std::endl; \
+		std::exit(EXIT_FAILURE); \
+	} \
+
+// The 'utils' namespace implements utility functions which cannot
+// be categorized into a specific class of helper routines. However
+// functions such as rotation transformations and ROS-Eigen data
+// structure conversions are collected under the 'utils::trans'
+// namespace in its specific header and source files. Similarly
+// laser processing routines are grouped under 'utils::laser'
+// namespace. As new functions are required, they should be added
+// directly under 'utils' namespace unless they intuitively form
+// a group/set of functions.
 
 namespace utils{
 
-Matrix3d yaw2dcm(const double &yaw);
-Matrix3d quat2dcm(const Vector4d &quat);
-Vector3d quat2rpy(const Vector4d &quat);
-Matrix3d rpy2dcm (const Vector3d &rpy);
-Vector4d rpy2quat(const Vector3d &rpy);
-Vector4d dcm2quat(const Matrix3d &dcm);
-Vector3d dcm2rpy (const Matrix3d &dcm);
+	// Clamps the given value in between the extrema
+	inline double clamp(double val, double min, double max){
+		return val > max ? max : val < min ? min : val;
+	}
 
-Matrix3d cancel_yaw(const Matrix3d &dcm );
-Vector4d cancel_yaw(const Vector4d &quat);
+	inline void clamp(double &val, double min, double max){
+		val = val > max ? max : val < min ? min : val;
+	}
 
-// ###
-Vector3d slerp(const Vector3d &quat1, const Vector3d &quat2, double theta);
-
-
-inline double saturate(double val, double min, double max){
-	return val > max ? max : val < min ? min : val;
-}
-
-inline double fix_angle(double ang){
-	while(ang > PI)
-		ang -= PI;
-	while(ang <= -PI)
-		ang += PI;
-	return ang;
-}
-
-inline bool polar2euclidean(const double &r, const double &th, double &x, double &y){
-	x = r * cos(th);
-	y = r * sin(th);
-	return true;
-}
-
-inline bool polar2euclidean(const vector<double> &rs, const vector<double> &ths, const vector<char> &mask, vector<double> &xs, vector<double> &ys){
-	assert(rs.size() == ths.size() &&
-		   (mask.size() == 0 || mask.size() == rs.size()));
-	if(rs.size() != xs.size())
-		xs.resize(rs.size());
-	if(rs.size() != ys.size())
-		ys.resize(xs.size());
-	bool use_mask = mask.size() != 0;
-	for(int i = 0 ; i < (int)rs.size() ; i++)
-		if(use_mask && mask[i] == true)
-			polar2euclidean(rs[i], ths[i], xs[i], ys[i]);
-	return true;
-}
-
-bool get_fim(const sensor_msgs::LaserScan   &data, const vector<char> &mask, Eigen::Matrix3d &fim, const char &cluster_id = 1);
-bool get_fim(const sensor_msgs::PointCloud2 &data, const vector<char> &mask, Eigen::Matrix6d &fim, const char &cluster_id = 1);
-
-// This function clusters the laser data. Each ray label is stored in 'mask'. 
-// Clustering is done accoring to a set of parameters: 
-// -- mask		   : an output array of cluster values 
-// -- num_clusters : the number of clusters as an output value
-// -- min_range    : any range smaller than this is marked as unused (=0)
-// -- max_range    : any range larger than this is marked as unused (=0)
-// -- min_skips    : consecutive this many rays causes initialization of a new cluster
-// -- range_jump   : a change in range value between consecutive rays causes init. of a new cluster
-// -- min_cluster_size : rays belonging to a cluster with number of elements less than this are marked as unused (=0)
-// For some cases, certain angles spans are required to be excluded from clustering (actually estimation)
-// due to occlusion etc. If the 'num_clusters = 1' and 'mask' has the same size of the number of rays,
-// rays with 'mask[] == 0' are excluded from the clustering process.
-bool cluster_laser_scan(const sensor_msgs::LaserScan &data, vector<char> &mask, int &num_clusters,
-						double min_range = 0.10, double max_range = 20.0, int min_skips = 5,
-						double range_jump = 0.3, int min_cluster_size = 3);
-
-
+	// This function returns the 2*PI modula shifted by -PI
+	// of an angle in radians
+	inline double fix_angle(double ang){
+		while(ang > PI)
+			ang -= PI;
+		while(ang <= -PI)
+			ang += PI;
+		return ang;
+	}
+	
+	inline void fix_angle(double &ang){
+		while(ang > PI)
+			ang -= PI;
+		while(ang <= -PI)
+			ang += PI;
+	}
 }
 
 #endif

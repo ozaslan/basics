@@ -28,7 +28,7 @@ add_definitions(${EIGEN_DEFINITIONS})
 #rosbuild_gensrv()
 
 #common commands for building c++ executables and libraries
-rosbuild_add_library(${PROJECT_NAME} src/utils.cc)
+rosbuild_add_library(${PROJECT_NAME} src/utils.cc src/trans_utils.cc src/laser_utils.cc)
 #target_link_libraries(${PROJECT_NAME} another_library)
 #rosbuild_add_boost_directories()
 #rosbuild_link_boost(${PROJECT_NAME} thread)
