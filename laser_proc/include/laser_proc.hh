@@ -63,18 +63,23 @@ class LaserProc{
     // This class can handle multiple scan at once. The original
     // data is saved in the '_orig_scans' vector
     double _angle_min, _angle_max, 
-            _angle_increment;           // same as the properties of the laser scan ROS message fields
-    vector<double> _ranges;             // stores the ranges. 
-    vector<double> _temp_ranges;        // used in median filter and other function where the original data has to be kept
-                                        // untouched till the end of the process.
+            _angle_increment;           // same as the ROS LaserScan message fields.
+    vector<double> _ranges;             // stores the ranges. Overwritten if necessary.
+    vector<double> _temp_ranges;        // used in median filter and other function where the original 
+                                        // data has to be kept untouched till the end of the process, filtering.
     LidarCalibParams _params;           // saves a copy of the parameter set.
     vector<Eigen::Vector3d> _3d_rays;   // saves the transformed 3D point set.
-    vector<Eigen::Vector2d> _2d_rays;   // saves the projected 2D point set.
-    vector<int> _mask;                  // encodes validity of range data saved in '_data'.
-    // Also saves the cluster id's.
-    vector<double> _linearity;          // encodes whether a point belongs to a line of corner.
+    vector<Eigen::Vector2d> _2d_rays;   // saves the Euclidean coordinates of the ray tips.
+    vector<int> _mask;                  // encodes validity of range data saved in '_ranges'.
+                                        // Also saves the cluster id's.
+    vector<double> _linearity;          // encodes whether a point belongs to a line or a corner.
+                                        // '0' means line and '1' corner.
     vector<pair<int, int> > _line_idxs; // saves the indices of the end points of lines.
     Eigen::Matrix3d _fim;               // Fisher Information Matrix.
+    int _num_clusters;                  // # of clusters starting from 0.
+
+    vector<double> _alphas;             // angles used to calculate fim in 'get_fim(...)'.
+
 
     // This stores a set of distinctive colors for RVIZ visualization.
     vector<Eigen::Vector3i> _colors;
@@ -106,7 +111,19 @@ class LaserProc{
       }
     }
 
+    // These save whether '_3d_rays' and '_2d_rays' vectors needs
+    // to be recalculated.
+    bool _2d_euclidean_coords_valid;
+    bool _3d_euclidean_coords_valid;
+
+    // This function initializes the internal vectors and parameters.
+    // Whenever new data arrives, this function is called.
     void _initialize();
+    // These functions transformes the range data to their 2D/3D Euclidean
+    // representations.
+    void _polar_to_2d_euclidean();
+    void _polar_to_3d_euclidean();
+
   public:
     LaserProc();
     // This function updates the internal raw copy of the lidar scan and 
@@ -129,15 +146,25 @@ class LaserProc{
     // than 'range_thres' meters to each other.
     // Returns a constant reference to '_mask'.
     const vector<int>& downsample(double range_thres = 0.05);
-    // This function detects and removes rays reflected from corners.
-    // These kind of rays typically occur when the scanner ray scuffs
-    // an egde and causes a range in the middle of the adjacent ranges.
-    // The adjacent ranges are usually significantly different from eachother.
-    // Returns a constant reference to '_mask'. 'range_thres' is the min.
-    // difference in range values of consecutive rays. The ray with the 
-    // greater range is marked as invalid. It is recommended to run
-    // shadow filter before any other filter.
-    const vector<int>& remove_shadows(double range_thres = 0.50);
+    // This function checks for significant jumpes on the ranges.
+    // If consecutive rays differ in their ranges significantly, 
+    // the point with the farther point is assumed to be occluded 
+    // (See LOAM paper Zhang, Singh). If 'win_size > 1' then 
+    // 'win_size - 1' number of neightbors of the removed point are 
+    // marked as invalid too. This function returns a constant reference 
+    // to '_mask'. 'range_thres' is the min. difference in range 
+    // values of consecutive rays. It is recommended to run
+    // occusion filter before any other filters.
+    const vector<int>& remove_occlusions(double range_thres = 0.50, int win_size = 3);
+    // This function removes points located on edges hit with large
+    // angle of attack where angle of attack is the relative orinetation
+    // between the normal of the corresponding egde and the ray in consideration.
+    // All rays those have greater attack angles than 'angle_thres' are
+    // removed together with the 'win_size' number of neighbors from
+    // each side. This function returns a constant reference to the
+    // '_mask' vector. (1.4835 rad. ~ 85 deg.)
+    // ### not implemented yet
+    const vector<int>& remove_slant_edges(double angle_thres = 1.4835, int win_size = 3);
     // This function clusters the laser data. Each ray label is stored in 'mask'. 
     // Clustering is done accoring to a set of parameters:        
     // -- _mask         : holds the cluster id's for all the data. '_mask[] = 0' means the ray is invalid.
@@ -147,9 +174,9 @@ class LaserProc{
     // -- min_cluster_size : rays belonging to a cluster with number of elements less than this are marked as unused (=0)
     // Rays with 'mask[] == 0' are never assigned to another cluster.
     // Returns a constant reference to '_mask'.
-    const vector<int>& clusters(int min_skips, double range_jump, int min_cluster_size);
-    // This function rates all of the points between 0-to-1 where '0' means a corner
-    // and '1' a line. 'win_size' is the number of rays on each side of ray of concern
+    const vector<int>& cluster(int min_skips = 3, double range_jump = 0.50, int min_cluster_size = 3);
+    // This function rates all of the points between 0-to-1 where greater values mean a corner
+    // and '0' a line. 'win_size' is the number of rays on each side of ray of concern
     // in 'line-ness' rating. Invalid points are not included in the calculation.
     // Thus, this function behaves different depending on the order of applied filters.
     // Returns a constant reference to '_linearity'.
@@ -177,18 +204,24 @@ class LaserProc{
     // 3D points. In order to reflect the effect, a second call to this function
     // is required. This also returns a reference to the transformed 3D points.
     // The return array is of the same as the '_mask' array.
-    const vector<Eigen::Vector3d>& transform(const Eigen::Matrix4d &trans, bool is_sensor_pose = false);
+    const vector<Eigen::Vector3d>& transform(const Eigen::Matrix4d &trans, bool is_sensor_pose);
     // This function projects points onto a plane with the normal vector 'n'. 
     // Previously applied transformations have affect on the projected point
     // set. This also returns are reference to the projected 2D points.
     // The returned array is of the same size as the '_mask' array.
-    const vector<Eigen::Vector2d>& project(const Eigen::Vector3d &n = Eigen::Vector3d(0, 0, 1));
+    // 'project(...)' functions is treated as a transformation and its results
+    // are stored in '_3d_rays' vector. Hence later this data can be retreived
+    // using the 'get_3d_points(...)' function. If 'reset_trans = true',
+    // effect of previous transformations, projections are nullified.
+    const vector<Eigen::Vector3d>& project(const Eigen::Vector3d &n = Eigen::Vector3d(0, 0, 1));
     // This function returns a constant referecen to the ranges array.
     // The vector is of the same size a the '_mask' array.
     const vector<double>& get_ranges();
     // This function returns the Fisher Information Matrix calculated 
     // using the method given in Andrea Censi's ICRA07 paper. This takes
     // into account of the latest clusters/mask vectors.
+    const Eigen::Matrix3d& estimate_fim(double skip_dist = 0.30, int skip_idxs = 30);
+    // This returns FIM estimated in 'estimate_fim(...)'
     const Eigen::Matrix3d& get_fim();
     // This returns a constant reference to the internal '_mask' array.
     const vector<int>& get_mask_array();
@@ -198,15 +231,14 @@ class LaserProc{
     // This returns the result of 'rate_linearity()' function. The return
     // vector is of the same size as the '_mask' array.
     const vector<double>& get_linearity_rates();
-    // This returns the results of 'project()' function. The return
-    // vector is of the same size as the '_mask' array.
-    const vector<Eigen::Vector2d>& get_projections();
     // This function returns a MarkerArray. Each Marker is populated with 
     // the points from one cluster only. The 'i^th' marker has the points
     // from the 'i^th' cluster. The last four markers have all the
     // points, linearity rates, line segments and the covariance estimate
     // respectively.
     bool get_RVIZ_markers(visualization_msgs::MarkerArray &marray);
+    // This returns the extrated line indices.
+    const vector<pair<int, int> >& get_line_indexes();
 };
 
 

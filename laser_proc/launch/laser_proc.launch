@@ -1,0 +1,72 @@
+<!-- 
+Example launch file: launches the scan matcher with pre-recorded data
+-->
+
+<launch>
+
+<param name = "use_sim_time" value = "true" />
+
+#### Playback ROSBAG  ##############################
+
+
+<!--
+<arg name="bagfile_path"  value="$(env ROS_DATASET_PATH)/13Jan_khex/1.bag" />
+<arg name="map_path"      value="$(find map_server)/maps/towne_basement.pcd" />
+-->
+<!--
+<arg name="bagfile_path"  value="$(env ROS_DATASET_PATH)/statefarm_dataset/6April/state_farm02.bag" />
+-->
+<arg name="bagfile_path"  value="$(env ROS_DATASET_PATH)/statefarm_dataset/mrsl01.bag" />
+<node	pkg ="rosbag"
+		name  ="rosbag"
+		type  ="play"
+    output="screen"
+    args  ="--loop --rate=1.0 $(arg bagfile_path) --start=0 --duration=10000 --clock --quiet">
+    <remap from="raw_imu" to="/khex/imu" />
+</node>
+
+#### start the Laser Processors  ##############################
+
+<node	pkg  = "laser_proc" 
+		name   = "laser_proc_top" 
+		type   = "laser_proc_node" 
+		output = "screen">
+		
+		<remap from="~imu"			to="/khex/imu"/>
+		<remap from="~scan"			to="/scan/top"/>
+		<!--
+		<param name="debug_mode"	value="TRUE"/>
+		<param name="refresh_rate"	value="40.0"/>	
+		-->
+		<rosparam file="$(find laser_proc)/config/laser_proc_test.yaml" command="load" />
+		<param name="calib_file"    value="$(find calib_data)/lidar/roof_ins_khex_top_lidar.yaml"/>
+</node> 
+
+#### start RVIZ Visualization ##############################
+
+<node	pkg="rviz"
+		name="rviz"
+		type="rviz"
+		output="screen"
+    args  ="-d $(find laser_proc)/rviz/laser_proc_test.rviz">
+		<param name="fixed-frame"	 value="world"/>
+</node>
+
+<node pkg="tf" type="static_transform_publisher" name="laser_link" args="0 0 0 0 0 0 /world /laser 100"/>
+
+</launch>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
