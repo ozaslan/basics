@@ -1,0 +1,49 @@
+<!-- 
+Example launch file: launches the scan matcher with pre-recorded data
+-->
+
+<launch>
+
+#### Playback ROSBAG  ##############################
+
+<node	pkg   ="rosbag"
+		name  ="rosbag"
+		type  ="play"
+		output="screen"
+		args  ="--loop --rate=1.0 $(env ROS_DATASET_PATH)/13Jan_khex/1.bag">
+</node>
+
+#### start the Tunnel Localizer ##############################
+
+<node	pkg  = "uniform_feat_tracker" 
+		name   = "uniform_feat_tracker" 
+		type   = "uniform_feat_tracker_app" 
+		output = "screen">
+		
+		<param name="debug_mode"	value="FALSE"/>
+		<param name="refresh_rate"	value="40.0"/>	
+</node> 
+
+<node	pkg="image_view"
+		name="image_view"
+		type="image_view"
+		output="screen" 
+		args="image:=/uniform_flows">
+</node>
+
+</launch>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
