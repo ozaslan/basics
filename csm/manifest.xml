@@ -1,0 +1,12 @@
+<package>
+  <description brief="csm">
+     This Andrea Censi's CSM library.
+  </description>
+  <author>Salih Tolga Ozaslan</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>https://github.com/AndreaCensi/csm</url>
+  <export>
+	<cpp cflags="-I${prefix}/deploy/include" lflags="-L${prefix}/deploy/lib -lcsm"/> 
+  </export>
+</package>
