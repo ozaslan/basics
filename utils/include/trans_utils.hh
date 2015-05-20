@@ -13,7 +13,10 @@ namespace utils{
 		// its corresponding SO(3) martix. Hence this only handels
 		// orientation.
 		Matrix3d imu2dcm(const sensor_msgs::Imu &imu, bool cancel_yaw = false);
-
+		// This function converts geometry_msgs::Pose structure into 
+		// its corresponding SE(3) matrix. Hence this only handles
+		// rotation and position.
+		Matrix4d pose2se3(const geometry_msgs::Pose &pose, bool cancel_yaw = false);
 		// The following functions transform between different
 		// rotation representations.
 		Matrix3d yaw2dcm(const double &yaw);

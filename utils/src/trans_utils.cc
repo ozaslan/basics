@@ -2,6 +2,26 @@
 
 namespace utils{
 	namespace trans{
+		Matrix4d pose2se3(const geometry_msgs::Pose &pose, bool cncl_yaw){
+			Matrix4d trans;
+			trans.fill(0);
+			trans(0, 3) = pose.position.x;
+			trans(1, 3) = pose.position.y;
+			trans(2, 3) = pose.position.z;
+			trans(3, 3) = 1;
+			Vector4d quat;
+			quat(0) = pose.orientation.w;
+			quat(1) = pose.orientation.x;
+			quat(2) = pose.orientation.y;
+			quat(3) = pose.orientation.z;
+			if(cncl_yaw == true){
+				Matrix3d dcm = quat2dcm(quat); 
+				trans.topLeftCorner(3, 3) = cancel_yaw(dcm); 
+			} else
+				trans.topLeftCorner<3, 3>() = quat2dcm(quat);
+			return trans;
+		}
+
 		Matrix4d odom2se3(const nav_msgs::Odometry &odom, bool cncl_yaw){
 			Matrix4d pose;
 			pose.fill(0);

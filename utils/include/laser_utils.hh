@@ -2,6 +2,7 @@
 #define __LASER_UTILS_HH__
 
 #include "utils.hh"
+#include <csm/csm_all.h>
 
 namespace utils{
 	namespace laser{
@@ -77,6 +78,31 @@ namespace utils{
 		bool fit_lines(const sensor_msgs::LaserScan &data, const vector<char> &mask, vector<pair<int, int> > &line_idxs,
 						double min_len = 0.10, double min_pts = 3, double epsilon = 0.08);
 
+    // This method finds the relative transformation between two robot poses by comparing
+    // the two lidar scans. 'pts1' and 'mask1' define the reference scan. First scan is 
+    // taken as the reference frame. The functions returns a vector which has the form
+	// [tx, ty, theta, isvalid, error]. The corresponding transformation is from world (first)
+	// to robot (second) frame.
+	// NOTE : The correct SE(3) for robot -> world transformation is
+	// trans.topLeftCorner<3, 3>() = utils::trans::yaw2dcm(theta).transpose();
+	// trans.topRightCorner<3, 1>() = -trans.topLeftCorner<3, 3>() * dt;
+	// where dt = [tx, ty, 0];
+    Eigen::Vector5d register_scan(vector<double> &ranges1, vector<int> &mask1, vector<double> &ths1,
+                                  vector<double> &ranges2, vector<int> &mask2, vector<double> &ths2,
+									const Eigen::Matrix3d &init_pose = Eigen::Matrix3d::Identity(),
+									bool	recover_from_error = false, 
+									double	max_angular_correction_deg = 20,
+									double	max_linear_correction = 2, /* m */ 
+									int		max_iterations = 1000, 
+									double	epsilon_xy = 0.001, /* m */
+									double	epsilon_theta = 0.001, /* rad */
+									double	max_correspondence_dist =  2, /* m */
+									double	sigma = 0.01, /* m */
+									bool	use_corr_tricks = false,
+									bool	restart = true,
+									double	restart_threshold_mean_error = 0.05,
+									double	restart_dt = 0.05, /* m */
+									double	restart_dtheta = 5 * 0.0261799  /* rad. */);
 	}
 }
 

@@ -47,6 +47,7 @@ using namespace Eigen;
 namespace Eigen{
 	typedef Eigen::Matrix<double, 6, 6> Matrix6d;
 	typedef Eigen::Matrix<double, 6, 1> Vector6d;
+	typedef Eigen::Matrix<double, 5, 1> Vector5d;
 }
 
 // This macro provides an efficient way to raise exceptions with
@@ -89,11 +90,11 @@ namespace utils{
 		return ang;
 	}
 	
-	inline void fix_angle(double &ang){
-		while(ang > PI)
-			ang -= PI;
-		while(ang <= -PI)
-			ang += PI;
+	inline void fix_angle(double *ang){
+		while(*ang > PI)
+			*ang -= PI;
+		while(*ang <= -PI)
+			*ang += PI;
 	}
 }
 

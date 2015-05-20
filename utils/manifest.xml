@@ -14,6 +14,7 @@
   <depend package="nav_msgs"/>
   <rosdep name="eigen" />
   <depend package="cv_bridge"/>
+  <depend package="csm"/>
   <export>
 	<cpp cflags="-I${prefix}/include" lflags="-L${prefix}/lib -lutils"/> 
   </export>
