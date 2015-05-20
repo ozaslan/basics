@@ -39,4 +39,7 @@ rosbuild_add_library(${PROJECT_NAME} src/laser_proc.cc)
 #rosbuild_add_boost_directories()
 #rosbuild_link_boost(${PROJECT_NAME} thread)
 rosbuild_add_executable(laser_proc_node src/laser_proc_node.cc)
-target_link_libraries(laser_proc_node ${PROJECT_NAME})
+# laser_proc_register.cc implements a demo application for scan alignment.
+rosbuild_add_executable(laser_proc_align src/laser_proc_align.cc)
+target_link_libraries(laser_proc_node  ${PROJECT_NAME})
+target_link_libraries(laser_proc_align ${PROJECT_NAME})
