@@ -8,6 +8,7 @@ Panels:
         - /Status1
         - /Imu1/Box properties1
         - /Imu1/Axes properties1
+        - /Odometry1
       Splitter Ratio: 0.535032
     Tree Height: 595
   - Class: rviz/Selection
@@ -28,12 +29,12 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: Proc-PointCloud
+    SyncSource: Proj-PointCloud
 Visualization Manager:
   Class: ""
   Displays:
     - Alpha: 0.5
-      Cell Size: 0.1
+      Cell Size: 0.25
       Class: rviz/Grid
       Color: 160; 160; 164
       Enabled: true
@@ -62,12 +63,12 @@ Visualization Manager:
       Color: 255; 255; 255
       Color Transformer: Intensity
       Decay Time: 0
-      Enabled: true
+      Enabled: false
       Invert Rainbow: true
       Max Color: 255; 0; 4
       Max Intensity: 0.5
       Min Color: 65; 167; 235
-      Min Intensity: 0.000255251
+      Min Intensity: 0.00428343
       Name: Proc-PointCloud
       Position Transformer: XYZ
       Queue Size: 10
@@ -78,7 +79,7 @@ Visualization Manager:
       Topic: /laser_proc_align/pc
       Use Fixed Frame: true
       Use rainbow: false
-      Value: true
+      Value: false
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -90,7 +91,7 @@ Visualization Manager:
       Class: rviz/PointCloud
       Color: 255; 255; 255
       Color Transformer: Intensity
-      Decay Time: 0
+      Decay Time: 10
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
@@ -109,13 +110,13 @@ Visualization Manager:
       Use rainbow: true
       Value: true
     - Class: rviz/MarkerArray
-      Enabled: true
+      Enabled: false
       Marker Topic: /laser_proc_align/vis
       Name: ClusterVisualization
       Namespaces:
-        "": true
+        {}
       Queue Size: 100
-      Value: true
+      Value: false
     - Alpha: 0.6
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -128,7 +129,7 @@ Visualization Manager:
       Color: 255; 255; 255
       Color Transformer: FlatColor
       Decay Time: 0
-      Enabled: true
+      Enabled: false
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Max Intensity: 4096
@@ -144,7 +145,7 @@ Visualization Manager:
       Topic: /laser_proc_align/lidar
       Use Fixed Frame: true
       Use rainbow: true
-      Value: true
+      Value: false
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -191,9 +192,19 @@ Visualization Manager:
         y_scale: 0.5
         z_scale: 0.1
       Class: rviz_imu_plugin/Imu
-      Enabled: true
+      Enabled: false
       Name: Imu
       Topic: /khex/imu
+      Value: false
+    - Angle Tolerance: 0
+      Class: rviz/Odometry
+      Color: 255; 25; 0
+      Enabled: true
+      Keep: 1
+      Length: 1
+      Name: Odometry
+      Position Tolerance: 0
+      Topic: /laser_proc_align/odom_out
       Value: true
   Enabled: true
   Global Options:
@@ -219,22 +230,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 14.784
+      Distance: 21.2087
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 1.90116
-        Y: 0.374573
-        Z: 0.998912
+        X: -0.900189
+        Y: -1.94678
+        Z: 0.904538
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 1.16947
+      Pitch: 1.4398
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 2.9034
+      Yaw: 1.1434
     Saved: ~
 Window Geometry:
   Displays:

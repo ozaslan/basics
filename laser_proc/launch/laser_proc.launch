@@ -34,13 +34,13 @@ Example launch file: launches the scan matcher with pre-recorded data
 		
 		<remap from="~imu"			to="ERASE_THIS_/khex/imu"/>
 		<remap from="~imu"			to="/khex/imu"/>
-		<remap from="~scan"			to="/scan/top"/>
+		<remap from="~scan"			to="/scan/bottom"/>
 		<!--
 		<param name="debug_mode"	value="TRUE"/>
 		<param name="refresh_rate"	value="40.0"/>	
 		-->
 		<rosparam file="$(find laser_proc)/config/laser_proc_test.yaml" command="load" />
-		<param name="calib_file"    value="$(find calib_data)/lidar/roof_ins_khex_top_lidar.yaml"/>
+		<param name="calib_file"    value="$(find calib_data)/lidar/roof_ins_khex_bottom_lidar.yaml"/>
 </node> 
 
 #### start RVIZ Visualization ##############################

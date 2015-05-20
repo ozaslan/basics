@@ -214,7 +214,7 @@ void imu_callback(const sensor_msgs::Imu &msg){
 
   imu_msg = msg;
 
-  trans.topLeftCorner<3, 3>() = utils::trans::imu2dcm(imu_msg, true); 
+  trans.topLeftCorner<3, 3>() = utils::trans::imu2dcm(imu_msg, true).transpose(); 
   trans.topRightCorner<3, 1>().fill(0);
   trans(3, 3) = 1;
 }

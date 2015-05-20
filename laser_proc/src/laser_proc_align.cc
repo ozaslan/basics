@@ -50,6 +50,7 @@ ros::Publisher	lidar_publ,
 	proc_lidar_publ,
 	vis_publ,
 	proj_pc_publ,
+	odom_publ,
 	pc_publ;
 
 // Calibration parameter of the lidar.
@@ -60,7 +61,7 @@ LaserProc			laser_procc;
 // lidar, point cloud and visualization markers.
 sensor_msgs::LaserScan			in_lidar_msg, out_lidar_msg;
 sensor_msgs::Imu				imu_msg;
-nav_msgs::Odometry				odom_msg;
+nav_msgs::Odometry				in_odom_msg, out_odom_msg;
 geometry_msgs::Pose				pose_msg;
 visualization_msgs::MarkerArray vis_msg;
 laser_proc::ProcLaserScan		proc_lidar_msg;
@@ -73,6 +74,7 @@ void odom_callback	(const nav_msgs::Odometry &msg);
 void pose_callback	(const geometry_msgs::Pose &msg);
 
 void publish_vis_msgs();
+void publish_odom_msg();
 void publish_lidar_msg();
 void publish_proc_lidar_msg();
 void publish_pc_msg();
@@ -194,6 +196,7 @@ void setup_messaging_interface(ros::NodeHandle &n)
 	pose_subs		= n.subscribe("pose", 10, pose_callback	, ros::TransportHints().tcpNoDelay()); 
 
 	lidar_publ		= n.advertise<sensor_msgs::LaserScan>("lidar", 10);
+	odom_publ		= n.advertise<nav_msgs::Odometry>("odom_out", 10);
 	pc_publ			= n.advertise<sensor_msgs::PointCloud>("pc", 10);
 	proj_pc_publ	= n.advertise<sensor_msgs::PointCloud>("proj_pc", 10);
 	proc_lidar_publ = n.advertise<laser_proc::ProcLaserScan>("proc_lidar", 10);
@@ -291,6 +294,7 @@ void lidar_callback(const sensor_msgs::LaserScan &msg){
 	publish_lidar_msg();
 	publish_proc_lidar_msg();
 	publish_pc_msg();
+	publish_odom_msg();
 	if(polar_visualization == true)
 		plot_polar_visualization();
 
@@ -304,9 +308,9 @@ void odom_callback(const nav_msgs::Odometry &msg){
 	if(debug_mode)
 		ROS_INFO("ROOF LOCALIZER : Got Odometry Data");
 
-	odom_msg = msg;
+	in_odom_msg = msg;
 
-	trans = utils::trans::odom2se3(odom_msg);
+	trans = utils::trans::odom2se3(in_odom_msg);
 }
 
 void pose_callback	(const geometry_msgs::Pose &msg){
@@ -484,4 +488,23 @@ void plot_polar_visualization(){
 	cv::namedWindow("Polar Plot");
 	cv::imshow("Polar Plot", plot1);
 	cv::waitKey(1);
+}
+
+void publish_odom_msg(){
+	out_odom_msg.header.seq++;
+	out_odom_msg.header.stamp = ros::Time::now();
+	out_odom_msg.header.frame_id = "world";
+
+	out_odom_msg.pose.pose.position.x = trans(0, 3);
+	out_odom_msg.pose.pose.position.y = trans(1, 3);
+	out_odom_msg.pose.pose.position.z = trans(2, 3);
+
+	Eigen::Vector4d quat = utils::trans::dcm2quat(trans.topLeftCorner<3, 3>());
+	out_odom_msg.pose.pose.orientation.w = quat(0);
+	out_odom_msg.pose.pose.orientation.x = quat(1);
+	out_odom_msg.pose.pose.orientation.y = quat(2);
+	out_odom_msg.pose.pose.orientation.z = quat(3);
+
+	odom_publ.publish(out_odom_msg);
+
 }

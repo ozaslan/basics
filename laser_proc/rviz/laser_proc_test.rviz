@@ -47,7 +47,7 @@ Visualization Manager:
       Offset:
         X: 0
         Y: 0
-        Z: 0
+        Z: -2
       Plane: XY
       Plane Cell Count: 150
       Reference Frame: <Fixed Frame>
@@ -69,7 +69,7 @@ Visualization Manager:
       Max Color: 255; 0; 4
       Max Intensity: 0.5
       Min Color: 65; 167; 235
-      Min Intensity: 0.000403426
+      Min Intensity: 0.000284711
       Name: Proc-PointCloud
       Position Transformer: XYZ
       Queue Size: 10
@@ -93,7 +93,7 @@ Visualization Manager:
       Color: 255; 255; 255
       Color Transformer: Intensity
       Decay Time: 0
-      Enabled: true
+      Enabled: false
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Max Intensity: 4096
@@ -109,7 +109,7 @@ Visualization Manager:
       Topic: /laser_proc_top/proj_pc
       Use Fixed Frame: true
       Use rainbow: true
-      Value: true
+      Value: false
     - Class: rviz/MarkerArray
       Enabled: false
       Marker Topic: /laser_proc_top/vis
@@ -221,22 +221,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 8.93822
+      Distance: 10.8915
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 1.90116
-        Y: 0.374573
-        Z: 0.998912
+        X: 1.91845
+        Y: -0.493655
+        Z: -0.808355
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 1.43947
+      Pitch: 0.399471
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 2.8934
+      Yaw: 3.2984
     Saved: ~
 Window Geometry:
   Displays:
