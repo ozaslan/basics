@@ -220,6 +220,9 @@ void imu_callback(const sensor_msgs::Imu &msg){
 
 	imu_msg = msg;
 
+	imu_msg.orientation.x *= -1;
+	imu_msg.orientation.y *= -1;
+
 	trans.topLeftCorner<3, 3>() = utils::trans::imu2dcm(imu_msg, true); 
 	trans.topRightCorner<3, 1>().fill(0);
 	trans(3, 3) = 1;

@@ -15,8 +15,9 @@ Example launch file: launches the scan matcher with pre-recorded data
 -->
 <!--
 <arg name="bagfile_path"  value="$(env ROS_DATASET_PATH)/statefarm_dataset/6April/state_farm02.bag" />
--->
 <arg name="bagfile_path"  value="$(env ROS_DATASET_PATH)/statefarm_dataset/mrsl01.bag" />
+-->
+<arg name="bagfile_path"  value="$(env ROS_DATASET_PATH)/compare_imu_vicon/khex01.bag" />
 <node	pkg ="rosbag"
 		name  ="rosbag"
 		type  ="play"
@@ -56,6 +57,8 @@ Example launch file: launches the scan matcher with pre-recorded data
 <node pkg="tf" type="static_transform_publisher" name="laser_link" args="0 0 0 0 0 0 /world /laser 100"/>
 
 <node pkg="tf" type="static_transform_publisher" name="body_link" args="0 0 0 0 0 0 /world /body 100"/>
+
+<node pkg="tf" type="static_transform_publisher" name="vicon_link" args="0 0 0 0 0 0 /world /vicon 100"/>
 
 </launch>
 

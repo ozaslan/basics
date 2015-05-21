@@ -15,8 +15,9 @@ Example launch file: launches the scan matcher with pre-recorded data
 -->
 <!--
 <arg name="bagfile_path"  value="$(env ROS_DATASET_PATH)/statefarm_dataset/6April/state_farm02.bag" />
--->
 <arg name="bagfile_path"  value="$(env ROS_DATASET_PATH)/statefarm_dataset/mrsl01.bag" />
+-->
+<arg name="bagfile_path"  value="$(env ROS_DATASET_PATH)/compare_imu_vicon/khex01.bag" />
 <!--
 <arg name="bagfile_path"  value="$(env ROS_DATASET_PATH)/juliett_mrsl_4.bag" />
 -->
@@ -35,7 +36,7 @@ Example launch file: launches the scan matcher with pre-recorded data
 		type   = "laser_proc_align" 
 		output = "screen">
 		
-		<remap from="~imu"			to="REMOVE_THIS_/khex/imu"/>
+		<remap from="~imu"			to="/khex/imu"/>
 		<remap from="~scan"			to="/scan/top"/>
     <!--
 		<remap from="~scan"			to="/juliett/laser/scan"/>

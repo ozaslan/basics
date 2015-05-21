@@ -10,6 +10,7 @@ Panels:
         - /ClusterVisualization1
         - /Imu1/Box properties1
         - /Imu1/Axes properties1
+        - /Odometry1
       Splitter Ratio: 0.535032
     Tree Height: 595
   - Class: rviz/Selection
@@ -35,7 +36,7 @@ Visualization Manager:
   Class: ""
   Displays:
     - Alpha: 0.5
-      Cell Size: 0.1
+      Cell Size: 0.25
       Class: rviz/Grid
       Color: 160; 160; 164
       Enabled: true
@@ -47,7 +48,7 @@ Visualization Manager:
       Offset:
         X: 0
         Y: 0
-        Z: -2
+        Z: 0
       Plane: XY
       Plane Cell Count: 150
       Reference Frame: <Fixed Frame>
@@ -69,7 +70,7 @@ Visualization Manager:
       Max Color: 255; 0; 4
       Max Intensity: 0.5
       Min Color: 65; 167; 235
-      Min Intensity: 0.000284711
+      Min Intensity: 0.000243269
       Name: Proc-PointCloud
       Position Transformer: XYZ
       Queue Size: 10
@@ -197,10 +198,20 @@ Visualization Manager:
       Name: Imu
       Topic: /khex/imu
       Value: true
+    - Angle Tolerance: 0
+      Class: rviz/Odometry
+      Color: 255; 25; 0
+      Enabled: false
+      Keep: 1
+      Length: 1
+      Name: Odometry
+      Position Tolerance: 0
+      Topic: /vicon/odom/InsKHex
+      Value: false
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: world
+    Fixed Frame: body
     Frame Rate: 30
   Name: root
   Tools:
@@ -221,22 +232,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 10.8915
+      Distance: 6.70568
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 1.91845
-        Y: -0.493655
-        Z: -0.808355
+        X: 0.175643
+        Y: -0.42853
+        Z: -1.02121
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.399471
+      Pitch: 0.279471
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.2984
+      Yaw: 4.7134
     Saved: ~
 Window Geometry:
   Displays:
