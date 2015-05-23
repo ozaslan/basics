@@ -237,11 +237,10 @@ const vector<int>& LaserProc::remove_slant_edges(double angle_thres, int win_siz
   rays_to_remove.reserve(num_ranges / 50);
 
   Eigen::Vector2d pt1, pt2, d;
-  double angle, th;
+  double angle;
   for(int i = 1 ; i < num_ranges - 1; i++){
     if(_mask[i] <= 0 || _mask[i - 1] <= 0 || _mask[i + 1] <= 0)
       continue;
-    th = _angle_min + i * _angle_increment;
     pt1 = _2d_rays[i - 1];
     pt2 = _2d_rays[i + 1];
     d   = pt2 - pt1;

@@ -282,15 +282,16 @@ void lidar_callback(const sensor_msgs::LaserScan &msg){
 		dicp_trans.topLeftCorner<3, 3>() = utils::trans::yaw2dcm(icp_res(2));
 		dicp_trans(0, 3) = icp_res(0);
 		dicp_trans(1, 3) = icp_res(1);
-		icp_trans = dicp_trans * icp_trans;
+		icp_trans = icp_trans * dicp_trans;
 		//cout << icp_trans << endl;
 	}
 
 	// Transform the second laser data with the result of registration
-	trans.topLeftCorner<3, 3>() = icp_trans.topLeftCorner<3, 3>().transpose();
-	trans.topRightCorner<3, 1>() = icp_trans.topRightCorner<3, 1>();
-	trans = icp_trans.inverse();
-	trans.topRightCorner<3, 1>() *= -1;
+	//trans.topLeftCorner<3, 3>() = icp_trans.topLeftCorner<3, 3>().transpose();
+	//trans.topRightCorner<3, 1>() = icp_trans.topRightCorner<3, 1>();
+	//trans = icp_trans.inverse();
+	trans = icp_trans;
+	//trans.topRightCorner<3, 1>() *= -1;
 	laser_procc.transform(trans, false);
 
 	publish_vis_msgs();

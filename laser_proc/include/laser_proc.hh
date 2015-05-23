@@ -249,6 +249,9 @@ class LaserProc{
     int get_num_clusters() const{
 	    return _num_clusters;
     }
+    double get_angle_min(){ return _angle_min;}
+    double get_angle_max(){ return _angle_max;}
+    double get_angle_increment(){ return _angle_increment;}
 };
 
 

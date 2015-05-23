@@ -48,7 +48,7 @@ Visualization Manager:
       Offset:
         X: 0
         Y: 0
-        Z: 0
+        Z: -1.8
       Plane: XY
       Plane Cell Count: 150
       Reference Frame: <Fixed Frame>
@@ -70,7 +70,7 @@ Visualization Manager:
       Max Color: 255; 0; 4
       Max Intensity: 0.5
       Min Color: 65; 167; 235
-      Min Intensity: 0.000243269
+      Min Intensity: 0.000198126
       Name: Proc-PointCloud
       Position Transformer: XYZ
       Queue Size: 10
@@ -232,7 +232,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 6.70568
+      Distance: 14.8241
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
@@ -244,10 +244,10 @@ Visualization Manager:
         Z: -1.02121
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.279471
+      Pitch: -0.0505289
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.7134
+      Yaw: 2.57839
     Saved: ~
 Window Geometry:
   Displays:
