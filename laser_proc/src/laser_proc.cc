@@ -359,8 +359,9 @@ const vector<double>& LaserProc::rate_linearity(int win_size){
     _polar_to_2d_euclidean();
 
   for(int i = 0 ; i < num_ranges ; i++){
-    if(_mask[i] < 0)
+    if(_mask[i] < 0){
       continue;
+    }
     Eigen::Vector2d temp(0, 0);
     int num_valid_pts = 0;
     for(int j = i - win_size ; j < i + win_size ; j++){
