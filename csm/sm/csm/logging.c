@@ -48,6 +48,7 @@ void sm_write_context();
 
 void sm_error(const char *msg, ...)
 {
+  //return;
 	check_for_xterm_color();
 	if(xterm_color_available)
 		fprintf(stderr, XTERM_ERROR);
