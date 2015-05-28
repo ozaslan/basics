@@ -260,7 +260,7 @@ namespace utils{
 
     Eigen::Vector5d register_scan(vector<double> &ranges1, vector<int> &mask1, vector<double> &ths1,
         vector<double> &ranges2, vector<int> &mask2, vector<double> &ths2,
-        const Eigen::Matrix3d &init_pose,
+        const Eigen::Vector3d &init_pose,
         bool  recover_from_error, double max_angular_correction_deg, double max_linear_correction,
         int   max_iterations,	double epsilon_xy, double epsilon_theta, double max_correspondence_dist, 
         double sigma, bool use_corr_tricks,	bool restart, double restart_threshold_mean_error, double restart_dt,
@@ -295,26 +295,101 @@ namespace utils{
       params.outliers_adaptive_mult = 2;
       params.do_visibility_test = 0;
       params.do_compute_covariance = 0;
+      params.use_sigma_weights = 0;
 
       struct laser_data ld1, ld2;
 
-      ld_alloc(&ld1, mask1.size());
-      ld_alloc(&ld2, mask2.size());
+      int num_valid_ranges1, num_valid_ranges2;
+      double min_angle1, min_angle2;
+      double max_angle1, max_angle2;
+      min_angle1 =  99999;
+      min_angle2 =  99999;
+      max_angle1 = -99999;
+      max_angle2 = -99999;
+      num_valid_ranges1 = 0;
+      num_valid_ranges2 = 0;
 
+      for(int i = 0 ; i < (int)mask1.size() ; i++){
+        if(mask1[i] > 0){
+          num_valid_ranges1++;
+          if(ths1[i] < min_angle1)
+            min_angle1 = ths1[i];
+          if(ths1[i] > max_angle1)
+            max_angle1 = ths1[i];
+        }
+      }
+
+      for(int i = 0 ; i < (int)mask2.size() ; i++){
+        if(mask2[i] > 0){
+          num_valid_ranges2++;
+          if(ths2[i] < min_angle2)
+            min_angle2 = ths2[i];
+          if(ths2[i] > max_angle2)
+            max_angle2 = ths2[i];
+        }
+      }
+
+      cout << "num_valid_ranges1 = " << num_valid_ranges1 << endl;
+      cout << "num_valid_ranges2 = " << num_valid_ranges2 << endl;
+
+
+      ld_alloc(&ld1, num_valid_ranges1);
+      ld_alloc(&ld2, num_valid_ranges2);
+
+      /*
+        ld_alloc(&ld1, mask1.size());
+      ld_alloc(&ld2, mask2.size());
+      */
+  
+      ld1.nrays = num_valid_ranges1;
+      ld1.min_theta = min_angle1;
+      ld1.max_theta = max_angle1;
+      for(int i = 0, j = 0 ; i < (int)mask1.size() ; i++){
+        if(mask1[i] > 0){
+          ld1.theta[j] = ths1[i];
+          ld1.valid[j] = 1;
+          ld1.readings[j] = ranges1[i];
+          j++;
+        }
+      }
+
+      /*
       ld1.nrays = mask1.size();
       ld1.min_theta = *std::min_element(ths1.begin(), ths1.end());
       ld1.max_theta = *std::max_element(ths1.begin(), ths1.end());
       memcpy(ld1.theta   , &ths1[0]     , mask1.size() * sizeof(ths1[0]));
       memcpy(ld1.valid   , &mask1[0]    , mask1.size() * sizeof(mask1[0]));
       memcpy(ld1.readings, &ranges1[0]  , mask1.size() * sizeof(ranges1[0]));
- 
+      */
+
+      //cout << "ld1_min_theta = " << ld1.min_theta << endl;
+      //cout << "ld1.theta[0]  = " << ld1.theta[0]  << endl;
+
+      ld2.nrays = num_valid_ranges2;
+      ld2.min_theta = min_angle2;
+      ld2.max_theta = max_angle2;
+      for(int i = 0, j = 0 ; i < (int)mask2.size() ; i++){
+        if(mask2[i] > 0){
+          ld2.theta[j] = ths2[i];
+          ld2.valid[j] = 1;
+          ld2.readings[j] = ranges2[i];
+          j++;
+        }
+      }
+
+      /*
       ld2.nrays = mask2.size();
       ld2.min_theta = *std::min_element(ths2.begin(), ths2.end());
       ld2.max_theta = *std::max_element(ths2.begin(), ths2.end());
       memcpy(ld2.theta   , &ths2[0]     , mask2.size() * sizeof(ths2[0]));
       memcpy(ld2.valid   , &mask2[0]    , mask2.size() * sizeof(mask2[0]));
       memcpy(ld2.readings, &ranges2[0]  , mask2.size() * sizeof(ranges2[0]));
+      */
 
+      //cout << "ld2_min_theta = " << ld2.min_theta << endl;
+      //cout << "ld2.theta[0]  = " << ld2.theta[0]  << endl;
+
+      /*
       for(int i = 0 ; i < (int)mask1.size() ; i++){
         ld1.valid[i]  = mask1[i] <= 0 ? 0 : 1;
         if(mask1[i] <= 0)
@@ -326,7 +401,8 @@ namespace utils{
         if(mask2[i] <= 0)
           ld2.readings[i] = numeric_limits<double>::quiet_NaN();
       }
- 
+      */
+
       ld1.odometry[0] = 0;
       ld1.odometry[1] = 0;
       ld1.odometry[2] = 0;
@@ -336,37 +412,37 @@ namespace utils{
 
       params.laser_ref  = &ld1;
       params.laser_sens = &ld2;
-      params.first_guess[0] = 0;
-      params.first_guess[1] = 0;
-      params.first_guess[2] = 0;
+      params.first_guess[0] = init_pose(0);
+      params.first_guess[1] = init_pose(1);
+      params.first_guess[2] = init_pose(2);
 
       params.min_reading = 0;
       params.max_reading = 20;
 
       /*
-      cout << params.laser_ref->nrays << ", " << params.laser_ref->min_theta << ", " << params.laser_ref->max_theta << endl;
-      for(int i = 0 ; i < ld1.nrays ; i++)
-        cout << params.laser_ref->theta[i] << " ";
-      cout << endl;
-      for(int i = 0 ; i < ld1.nrays ; i++)
-        cout << params.laser_ref->valid[i] << " ";
-      cout << endl;
-      for(int i = 0 ; i < ld1.nrays ; i++)
-        cout << params.laser_ref->readings[i] << " ";
-      cout << endl;
-      cout << "----------------------" << endl;
-      cout << params.laser_sens->nrays << ", " << params.laser_sens->min_theta << ", " << params.laser_sens->max_theta << endl;
-      for(int i = 0 ; i < ld2.nrays ; i++)
-        cout << params.laser_sens->theta[i] << " ";
-      cout << endl;
-      for(int i = 0 ; i < ld2.nrays ; i++)
-        cout << params.laser_sens->valid[i] << " ";
-      cout << endl;
-      for(int i = 0 ; i < ld2.nrays ; i++)
-        cout << params.laser_sens->readings[i] << " ";
-      cout << endl;
+         cout << params.laser_ref->nrays << ", " << params.laser_ref->min_theta << ", " << params.laser_ref->max_theta << endl;
+         for(int i = 0 ; i < ld1.nrays ; i++)
+         cout << params.laser_ref->theta[i] << " ";
+         cout << endl;
+         for(int i = 0 ; i < ld1.nrays ; i++)
+         cout << params.laser_ref->valid[i] << " ";
+         cout << endl;
+         for(int i = 0 ; i < ld1.nrays ; i++)
+         cout << params.laser_ref->readings[i] << " ";
+         cout << endl;
+         cout << "----------------------" << endl;
+         cout << params.laser_sens->nrays << ", " << params.laser_sens->min_theta << ", " << params.laser_sens->max_theta << endl;
+         for(int i = 0 ; i < ld2.nrays ; i++)
+         cout << params.laser_sens->theta[i] << " ";
+         cout << endl;
+         for(int i = 0 ; i < ld2.nrays ; i++)
+         cout << params.laser_sens->valid[i] << " ";
+         cout << endl;
+         for(int i = 0 ; i < ld2.nrays ; i++)
+         cout << params.laser_sens->readings[i] << " ";
+         cout << endl;
 
-      */
+       */
       sm_icp(&params, &result);
 
       ld_dealloc(&ld1);

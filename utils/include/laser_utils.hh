@@ -81,18 +81,14 @@ namespace utils{
     // This method finds the relative transformation between two robot poses by comparing
     // the two lidar scans. 'pts1' and 'mask1' define the reference scan. First scan is 
     // taken as the reference frame. The functions returns a vector which has the form
-	// [tx, ty, theta, isvalid, error]. The corresponding transformation is from world (first)
-	// to robot (second) frame.
-	// NOTE : The correct SE(3) for robot -> world transformation is
-	// trans.topLeftCorner<3, 3>() = utils::trans::yaw2dcm(theta).transpose();
-	// trans.topRightCorner<3, 1>() = -trans.topLeftCorner<3, 3>() * dt;
-	// where dt = [tx, ty, 0];
+	// [tx, ty, theta, isvalid, error]. The corresponding transformation is from robot (second)
+	// to world (first) frame. [rotation := wRr and trans = tw]
     Eigen::Vector5d register_scan(vector<double> &ranges1, vector<int> &mask1, vector<double> &ths1,
                                   vector<double> &ranges2, vector<int> &mask2, vector<double> &ths2,
-									const Eigen::Matrix3d &init_pose = Eigen::Matrix3d::Identity(),
+									const Eigen::Vector3d &init_pose = Eigen::Vector3d::Zero(),
 									bool	recover_from_error = false, 
 									double	max_angular_correction_deg = 20,
-									double	max_linear_correction = 2, /* m */ 
+									double	max_linear_correction = .5, /* m */ 
 									int		max_iterations = 1000, 
 									double	epsilon_xy = 0.001, /* m */
 									double	epsilon_theta = 0.001, /* rad */

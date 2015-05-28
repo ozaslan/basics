@@ -2,6 +2,20 @@
 
 namespace utils{
 	namespace trans{
+		nav_msgs::Odometry se32odom(const Eigen::Matrix4d &se3, bool cncl_yaw){
+			nav_msgs::Odometry odom;
+			odom.pose.pose.position.x = se3(0, 3);
+			odom.pose.pose.position.y = se3(1, 3);
+			odom.pose.pose.position.z = se3(2, 3);
+			Eigen::Vector4d quat = dcm2quat(se3.topLeftCorner<3, 3>());
+			odom.pose.pose.orientation.w = quat(0);
+			odom.pose.pose.orientation.x = quat(1);
+			odom.pose.pose.orientation.y = quat(2);
+			odom.pose.pose.orientation.z = quat(3);
+
+			return odom;
+		}
+
 		Matrix4d pose2se3(const geometry_msgs::Pose &pose, bool cncl_yaw){
 			Matrix4d trans;
 			trans.fill(0);
@@ -42,6 +56,20 @@ namespace utils{
 			return pose;
 		}
 
+		Vector3d imu2rpy(const sensor_msgs::Imu &imu, bool cncl_yaw){
+			Vector4d quat;
+			Vector3d rpy;
+			quat(0) = imu.orientation.w;
+			quat(1) = imu.orientation.x;
+			quat(2) = imu.orientation.y;
+			quat(3) = imu.orientation.z;
+			rpy = quat2rpy(quat); 
+			if(cncl_yaw == true)
+				rpy(2) = 0;
+			return rpy;
+		}
+
+
 		Matrix3d imu2dcm(const sensor_msgs::Imu &imu, bool cncl_yaw){
 			Vector4d quat;
 			Matrix3d dcm;
@@ -59,8 +87,8 @@ namespace utils{
 		Matrix3d yaw2dcm(const double &yaw){
 			Matrix3d dcm = Matrix3d::Identity();
 			dcm(0, 0) =  cos(yaw);
-			dcm(0, 1) =  sin(yaw);
-			dcm(1, 0) = -sin(yaw);
+			dcm(0, 1) = -sin(yaw);
+			dcm(1, 0) =  sin(yaw);
 			dcm(1, 1) =  cos(yaw);
 			return dcm;
 		}
