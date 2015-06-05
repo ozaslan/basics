@@ -58,18 +58,20 @@ using namespace std;
 class LaserProc{
   private:
     double _angle_min, _angle_max, 
-            _angle_increment,
-            _sec, _nsec;                // same as the ROS LaserScan message fields.
+           _angle_increment,
+           _sec, _nsec;                // same as the ROS LaserScan message fields.
+    vector<double> _intensities;		// '' 
     vector<double> _ranges;             // stores the ranges. Overwritten if necessary.
+	vector<double> _thetas;				// stores the array of angles corresponding to each range value.
     vector<double> _temp_ranges;        // used in median filter and other function where the original 
-                                        // data has to be kept unmodified till the end of the process, filtering.
+    // data has to be kept unmodified till the end of the process, filtering.
     LidarCalibParams _params;           // saves a copy of the parameter set.
     vector<Eigen::Vector3d> _3d_rays;   // saves the transformed 3D point set.
     vector<Eigen::Vector2d> _2d_rays;   // saves the 2D Euclidean coordinates of the ray tips in sensor frame.
     vector<int> _mask;                  // encodes validity of range data saved in '_ranges'.
-                                        // Also saves the cluster id's.
+    // Also saves the cluster id's.
     vector<double> _linearity;          // encodes whether a point belongs to a line or a corner.
-                                        // '0' means line and '1' corner.
+    // '0' means line and '1' corner.
     vector<pair<int, int> > _line_idxs; // saves the indices of the end points of lines.
     Eigen::Matrix3d _fim;               // Fisher Information Matrix.
     int _num_clusters;                  // # of clusters starting from 0.
@@ -79,25 +81,25 @@ class LaserProc{
 
     // This stores a set of distinctive colors for RVIZ visualization.
     vector<Eigen::Vector3i> _colors;
-    
+
     inline void _generate_colors(){
       int temp_colors[] = {
-      0x000000, 0x00FF00, 0x0000FF, 0xFF0000,
-      0x01FFFE, 0xFFA6FE, 0xFFDB66, 0x006401,
-      0x010067, 0x95003A, 0x007DB5, 0xFF00F6,
-      0xFFEEE8, 0x774D00, 0x90FB92, 0x0076FF,
-      0xD5FF00, 0xFF937E, 0x6A826C, 0xFF029D,
-      0xFE8900, 0x7A4782, 0x7E2DD2, 0x85A900,
-      0xFF0056, 0xA42400, 0x00AE7E, 0x683D3B,
-      0xBDC6FF, 0x263400, 0xBDD393, 0x00B917,
-      0x9E008E, 0x001544, 0xC28C9F, 0xFF74A3,
-      0x01D0FF, 0x004754, 0xE56FFE, 0x788231,
-      0x0E4CA1, 0x91D0CB, 0xBE9970, 0x968AE8,
-      0xBB8800, 0x43002C, 0xDEFF74, 0x00FFC6,
-      0xFFE502, 0x620E00, 0x008F9C, 0x98FF52,
-      0x7544B1, 0xB500FF, 0x00FF78, 0xFF6E41,
-      0x005F39, 0x6B6882, 0x5FAD4E, 0xA75740,
-      0xA5FFD2, 0xFFB167, 0x009BFF, 0xE85EBE};
+        0x000000, 0x00FF00, 0x0000FF, 0xFF0000,
+        0x01FFFE, 0xFFA6FE, 0xFFDB66, 0x006401,
+        0x010067, 0x95003A, 0x007DB5, 0xFF00F6,
+        0xFFEEE8, 0x774D00, 0x90FB92, 0x0076FF,
+        0xD5FF00, 0xFF937E, 0x6A826C, 0xFF029D,
+        0xFE8900, 0x7A4782, 0x7E2DD2, 0x85A900,
+        0xFF0056, 0xA42400, 0x00AE7E, 0x683D3B,
+        0xBDC6FF, 0x263400, 0xBDD393, 0x00B917,
+        0x9E008E, 0x001544, 0xC28C9F, 0xFF74A3,
+        0x01D0FF, 0x004754, 0xE56FFE, 0x788231,
+        0x0E4CA1, 0x91D0CB, 0xBE9970, 0x968AE8,
+        0xBB8800, 0x43002C, 0xDEFF74, 0x00FFC6,
+        0xFFE502, 0x620E00, 0x008F9C, 0x98FF52,
+        0x7544B1, 0xB500FF, 0x00FF78, 0xFF6E41,
+        0x005F39, 0x6B6882, 0x5FAD4E, 0xA75740,
+        0xA5FFD2, 0xFFB167, 0x009BFF, 0xE85EBE};
       _colors.clear();
       _colors.reserve(64);
       for(int i = 0 ; i < 64 ; i++){
@@ -126,9 +128,9 @@ class LaserProc{
     // sets the internal parameters such as min/max range, dead regions etc.
     // '_mask' is initialized according to the data size and the given parameter set
     // such that it excludes short/long/inf/NaN measurements and dead regions.
-	// Also rays redirected upwards and downwards are labeled as '-1' and '-2'
-	// in the '_mask' array. These clusters are treated specially in many of the
-	// other porcesses and filters. 
+    // Also rays redirected upwards and downwards are labeled as '-1' and '-2'
+    // in the '_mask' array. These clusters are treated specially in many of the
+    // other porcesses and filters. 
     // Returns a constant reference to '_mask'.
     const vector<int>& update_data(const sensor_msgs::LaserScan &data, const LidarCalibParams &params);
     // This function is the same as the above function except this does 
@@ -141,6 +143,11 @@ class LaserProc{
     // Invalid ranges are not included in the process.
     // Returns a constant reference to the ranges vector.
     const vector<double>& median_filter(int win_size = 5);
+    // This function masks out laser beams with intensity lower
+    // than 'intensity_thres'. This filter can be useful when 
+    // working in environment which have low-reflectance surfaces
+    // and fail the tailed estimators.
+    const vector<int>& intensity_filter(double intensity_thres = 1000);
     // This function removes rays such that no two ray tips are closer
     // than 'range_thres' meters to each other.
     // Returns a constant reference to '_mask'.
@@ -151,9 +158,9 @@ class LaserProc{
     // (See LOAM paper Zhang, Singh). If 'win_size > 1' then 
     // 'win_size - 1' number of neighbors of the center point are 
     // marked as invalid as well. 'range_thres' is the min. difference
-	// between range values of consecutive rays. It is recommended to run
+    // between range values of consecutive rays. It is recommended to run
     // occusion filter before any other filters. This function 
-	// returns a constant reference to '_mask'. 
+    // returns a constant reference to '_mask'. 
     const vector<int>& remove_occlusions(double range_thres = 0.50, int win_size = 3);
     // This function removes points on edges hit with large
     // angle of attack where angle of attack is the relative orinetation
@@ -214,6 +221,12 @@ class LaserProc{
     // This function returns a constant reference to the ranges array.
     // The vector is of the same size a the '_mask' array.
     const vector<double>& get_ranges() const;
+	// This function returns the angle coordinates of the 
+	// ranges. This is mostly used with other functions suchs as
+	// utils::laser::register(...). As long as the laser source
+	// does not chance, angles are not re-calculated hence does not
+	// cause extra load.
+    const vector<double>& get_thetas() const;
     // This function returns the Fisher Information Matrix calculated 
     // using the method given in Andrea Censi's ICRA07 paper. This takes
     // into account of the latest clusters/mask vectors.
@@ -233,7 +246,7 @@ class LaserProc{
     // from the 'i^th' cluster. The last four markers have all the
     // points, linearity rates, line segments and the covariance estimate
     // respectively. The set of points reflect the effect of previous 
-	// transformations.
+    // transformations.
     bool get_RVIZ_markers(visualization_msgs::MarkerArray &marray) const;
     // This returns the extrated line indices.
     const vector<pair<int, int> >& get_line_indexes() const;
@@ -247,7 +260,7 @@ class LaserProc{
     }
     // This returns the number of clusters
     int get_num_clusters() const{
-	    return _num_clusters;
+      return _num_clusters;
     }
     double get_angle_min() const { return _angle_min;}
     double get_angle_max() const { return _angle_max;}

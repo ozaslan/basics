@@ -12,6 +12,13 @@ void LaserProc::_initialize(){
 
   _num_clusters = 2; // we are sure that we have '0', '1' clusters.
 
+  if(_thetas.size() != _ranges.size() ||
+     _thetas[0] != _angle_min || _thetas.back() != _angle_max){
+    _thetas.resize(_ranges.size());
+    for(int i = 0 ; i < (int)_thetas.size() ; i++)
+      _thetas[i] = _angle_min + i * _angle_increment;
+  }
+
   // Mask the regions to be omitted (dead_regions) (invalid = {_mask[i] = 0})
   for(int i = 0 ; i < (int)_params.dead_regions.size() ; i+=2){
     double th_begin = _params.dead_regions[i];
@@ -103,6 +110,7 @@ const vector<int>& LaserProc::update_data(const sensor_msgs::LaserScan &data, co
   _angle_max = data.angle_max;
   _angle_increment = data.angle_increment;
   _ranges = vector<double>(data.ranges.begin(), data.ranges.end());
+  _intensities = vector<double>(data.intensities.begin(), data.intensities.end());
   _sec = data.header.stamp.sec;
   _nsec = data.header.stamp.nsec;
   _params = params;
@@ -120,6 +128,7 @@ const vector<int>& LaserProc::update_data(const sensor_msgs::LaserScan &data){
   _sec = data.header.stamp.sec;
   _nsec = data.header.stamp.nsec;
   _ranges = vector<double>(data.ranges.begin(), data.ranges.end());
+  _intensities = vector<double>(data.intensities.begin(), data.intensities.end());
   _2d_euclidean_coords_valid = false;
   _3d_euclidean_coords_valid = false;
 
@@ -188,6 +197,15 @@ const vector<double>& LaserProc::median_filter(int win_size){
   _3d_euclidean_coords_valid = false;
 
   return _ranges;
+}
+
+const vector<int>& LaserProc::intensity_filter(double intensity_thres){
+  int num_ranges = _mask.size();
+  for(int i = 0 ; i < num_ranges ; i++){
+    _mask[i] = _intensities[i] < intensity_thres ? 0 : _mask[i];
+  }
+
+  return _mask;
 }
 
 const vector<int>& LaserProc::downsample(double range_thres){
@@ -478,6 +496,10 @@ const vector<Eigen::Vector3d>& LaserProc::project(const Eigen::Vector3d &n){
 
 const vector<double>& LaserProc::get_ranges() const {
   return _ranges;
+}
+
+const vector<double>& LaserProc::get_thetas() const {
+  return _thetas;
 }
 
 const Eigen::Matrix3d& LaserProc::estimate_fim(double skip_dist, int skip_idxs){
