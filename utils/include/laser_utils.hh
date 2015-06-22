@@ -83,8 +83,8 @@ namespace utils{
     // taken as the reference frame. The functions returns a vector which has the form
 	// [tx, ty, theta, isvalid, error]. The corresponding transformation is from robot (second)
 	// to world (first) frame. [rotation := wRr and trans = tw]
-    Eigen::Vector5d register_scan(vector<double> &ranges1, vector<int> &mask1, vector<double> &ths1,
-                                  vector<double> &ranges2, vector<int> &mask2, vector<double> &ths2,
+    Eigen::Vector5d register_scan(const vector<double> &ranges1, const vector<int> &mask1, const vector<double> &ths1,
+                                  const vector<double> &ranges2, const vector<int> &mask2, const vector<double> &ths2,
 									const Eigen::Vector3d &init_pose = Eigen::Vector3d::Zero(),
 									bool	recover_from_error = false, 
 									double	max_angular_correction_deg = 20,

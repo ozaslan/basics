@@ -9,7 +9,7 @@ namespace utils{
       // number of elements.
       int mask_size = mask.size();
       int ranges_size = data.ranges.size();
-      assert(mask_size == 0 || mask_size == ranges_size);
+      ASSERT(mask_size == 0 || mask_size == ranges_size, "mask_size == 0 || mask_size == data.ranges.size()");
 
       //cout << "-- M1" << endl;
 
@@ -258,8 +258,8 @@ namespace utils{
       return true;
     }
 
-    Eigen::Vector5d register_scan(vector<double> &ranges1, vector<int> &mask1, vector<double> &ths1,
-        vector<double> &ranges2, vector<int> &mask2, vector<double> &ths2,
+    Eigen::Vector5d register_scan(const vector<double> &ranges1, const vector<int> &mask1, const vector<double> &ths1,
+        const vector<double> &ranges2, const vector<int> &mask2, const vector<double> &ths2,
         const Eigen::Vector3d &init_pose,
         bool  recover_from_error, double max_angular_correction_deg, double max_linear_correction,
         int   max_iterations,	double epsilon_xy, double epsilon_theta, double max_correspondence_dist, 
@@ -329,8 +329,8 @@ namespace utils{
         }
       }
 
-      cout << "num_valid_ranges1 = " << num_valid_ranges1 << endl;
-      cout << "num_valid_ranges2 = " << num_valid_ranges2 << endl;
+      //cout << "num_valid_ranges1 = " << num_valid_ranges1 << endl;
+      //cout << "num_valid_ranges2 = " << num_valid_ranges2 << endl;
 
 
       ld_alloc(&ld1, num_valid_ranges1);

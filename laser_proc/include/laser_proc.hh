@@ -148,10 +148,16 @@ class LaserProc{
     // working in environment which have low-reflectance surfaces
     // and fail the tailed estimators.
     const vector<int>& intensity_filter(double intensity_thres = 1000);
+	// This function masks out the points those are greater (smaller) than
+	// 'linearity_thres' if 'upper_bound == true' ('upper_bound == false').
+	// This returns a constant reference to the resultant '_mask' vector.
+	// The programmer is assumed to have called  'rate_linearity()' before
+	// this function is called.
+	const vector<int>& linearity_filter(double linearity_thres = 0.3, bool upper_bound = true);
     // This function removes rays such that no two ray tips are closer
     // than 'range_thres' meters to each other.
     // Returns a constant reference to '_mask'.
-    const vector<int>& downsample(double range_thres = 0.05);
+	const vector<int>& downsample(double range_thres = 0.05);
     // This function checks for significant jumpes on the ranges.
     // If consecutive rays differ in their ranges significantly, 
     // the farther point is assumed to be occluded 

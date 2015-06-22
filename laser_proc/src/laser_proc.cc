@@ -13,7 +13,7 @@ void LaserProc::_initialize(){
   _num_clusters = 2; // we are sure that we have '0', '1' clusters.
 
   if(_thetas.size() != _ranges.size() ||
-     _thetas[0] != _angle_min || _thetas.back() != _angle_max){
+      _thetas[0] != _angle_min || _thetas.back() != _angle_max){
     _thetas.resize(_ranges.size());
     for(int i = 0 ; i < (int)_thetas.size() ; i++)
       _thetas[i] = _angle_min + i * _angle_increment;
@@ -208,6 +208,24 @@ const vector<int>& LaserProc::intensity_filter(double intensity_thres){
   return _mask;
 }
 
+const vector<int>& LaserProc::linearity_filter(double linearity_thres, bool upper_bound){
+  ASSERT(_linearity.size() == _mask.size(), "_linearity.size() == _mask.size()");
+
+  int num_ranges = _mask.size();
+  if(upper_bound == true){
+    for(int i = 0 ; i < num_ranges ; i++){
+      _mask[i] = _linearity[i] > linearity_thres ? 0 : _mask[i];
+    }
+  } else {
+    for(int i = 0 ; i < num_ranges ; i++){
+      _mask[i] = _linearity[i] < linearity_thres ? 0 : _mask[i];
+    }
+  }
+
+  return _mask;
+}
+
+
 const vector<int>& LaserProc::downsample(double range_thres){
   ASSERT(range_thres > 0, "(range_thres > 0) should hold.");
 
@@ -224,18 +242,19 @@ const vector<int>& LaserProc::downsample(double range_thres){
       // Even if the next ray might be closer than range_thres,
       // clustering will put these two rays in different
       // buckets. Thus, the loop can be terminated.
-      if(fabs(range2 - range1) > range_thres)
+      if(fabs(range2 - range1) > range_thres){
         break;
+      }
 
       double gamma = (j - i) * _angle_increment;
       double d = range1 * range1 + range2 * range2 - 2 * range1 * range2 * cos(gamma);
-      if(d < range_thres * range_thres)
-        _mask[j] = false;
-      else
+      if(d < range_thres * range_thres){
+        _mask[j] = 0;
+      } else {
         break;
+      }
     }
   }
-
   return _mask;
 }
 

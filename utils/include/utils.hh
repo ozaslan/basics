@@ -45,57 +45,62 @@ using namespace Eigen;
 
 // Define new Eigen matrix and vector types
 namespace Eigen{
-	typedef Eigen::Matrix<double, 6, 6> Matrix6d;
-	typedef Eigen::Matrix<double, 6, 1> Vector6d;
-	typedef Eigen::Matrix<double, 5, 1> Vector5d;
+  typedef Eigen::Matrix<double, 6, 6> Matrix6d;
+  typedef Eigen::Matrix<double, 6, 1> Vector6d;
+  typedef Eigen::Matrix<double, 5, 1> Vector5d;
 }
 
-// This macro provides an efficient way to raise exceptions with
-// very informative command line messages.
-#define ASSERT(condition, message) \
-	if (! (condition)) { \
-		std::cerr << "Assertion `" #condition "` failed in " << __FILE__ \
-		<< " line " << __LINE__ << ": " << message << std::endl; \
-		std::exit(EXIT_FAILURE); \
-	} \
-
-// The 'utils' namespace implements utility functions which cannot
-// be categorized into a specific class of helper routines. However
-// functions such as rotation transformations and ROS-Eigen data
-// structure conversions are collected under the 'utils::trans'
-// namespace in its specific header and source files. Similarly
-// laser processing routines are grouped under 'utils::laser'
-// namespace. As new functions are required, they should be added
-// directly under 'utils' namespace unless they intuitively form
-// a group/set of functions.
-
 namespace utils{
+  // This macro provides an efficient way to raise exceptions with
+  // very informative command line messages.
+#define ASSERT(condition, message) \
+  if (! (condition)) { \
+    std::cerr << "Assertion `" #condition "` failed in " << __FILE__ \
+    << " line " << __LINE__ << ": " << message << std::endl; \
+    std::exit(EXIT_FAILURE); \
+  } \
 
-	// Clamps the given value in between the extrema
-	inline double clamp(double val, double min, double max){
-		return val > max ? max : val < min ? min : val;
-	}
+#define DEG2RAD(x) ((x) / 180.0 * PI)
+#define RAD2DEG(x) ((x) / PI * 180.0)
 
-	inline void clamp(double &val, double min, double max){
-		val = val > max ? max : val < min ? min : val;
-	}
+  // The 'utils' namespace implements utility functions which cannot
+  // be categorized into a specific class of helper routines. However
+  // functions such as rotation transformations and ROS-Eigen data
+  // structure conversions are collected under the 'utils::trans'
+  // namespace in its specific header and source files. Similarly
+  // laser processing routines are grouped under 'utils::laser'
+  // namespace. As new functions are required, they should be added
+  // directly under 'utils' namespace unless they intuitively form
+  // a group/set of functions.
 
-	// This function returns the 2*PI modula shifted by -PI
-	// of an angle in radians
-	inline double fix_angle(double ang){
-		while(ang > PI)
-			ang -= PI;
-		while(ang <= -PI)
-			ang += PI;
-		return ang;
-	}
-	
-	inline void fix_angle(double *ang){
-		while(*ang > PI)
-			*ang -= PI;
-		while(*ang <= -PI)
-			*ang += PI;
-	}
+
+  // Clamps the given value in between the extrema
+  inline double clamp(double val, double min, double max){
+    return val > max ? max : val < min ? min : val;
+  }
+
+  /*
+     inline void clamp(double &val, double min, double max){
+     val = val > max ? max : val < min ? min : val;
+     }
+   */
+
+  // This function returns the 2*PI modula shifted by -PI
+  // of an angle in radians
+  inline double fix_angle(double ang){
+    while(ang > PI)
+      ang -= PI;
+    while(ang <= -PI)
+      ang += PI;
+    return ang;
+  }
+
+  inline void fix_angle(double *ang){
+    while(*ang > PI)
+      *ang -= PI;
+    while(*ang <= -PI)
+      *ang += PI;
+  }
 }
 
 #endif
