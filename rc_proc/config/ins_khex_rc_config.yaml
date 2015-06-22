@@ -1,0 +1,23 @@
+# Dead zones define the range for which the
+# raw data is mapped to zero output. Assume the
+# min and max values are 0 and 1000 and the 
+# dead region is 10. Then 495-505 is mapped to
+# zero output.
+
+# If normalization is set to true, the raw data
+# is normalized to a value between [-1, 1]
+
+dead_zone_x: 15
+dead_zone_y: 15
+dead_zone_z: 20
+dead_zone_psi: 15
+min_x: 0
+max_x: 1000
+min_y: 0
+max_y: 1000
+min_z: 0
+max_z: 1000
+min_psi: 0
+max_psi: 1000
+normalize: true
+

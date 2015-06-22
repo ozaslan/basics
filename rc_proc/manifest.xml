@@ -1,0 +1,25 @@
+<package>
+  <description brief="rc_proc">
+    This node defines a class for processing
+    raw RC commands. Given the configuration file,
+    dead zone filtering and stick position normalization
+    etc. is carried by the class. This node serves the
+    purpose of reducing the coder's work load and 
+    save from re-coding the same logic again.
+
+    This node does not have an application interface.
+    Any navigator should directly use the class.
+  </description>
+  <author>ozaslan</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/rc_proc</url>
+  <depend package="roscpp"/>
+  <depend package="com_msgs"/>
+
+  <export>
+    <cpp cflags="-I${prefix}/include" lflags="-L${prefix}/lib -lrc_proc"/> 
+  </export>
+</package>
+
+
