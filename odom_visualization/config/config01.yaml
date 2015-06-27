@@ -1,13 +1,9 @@
 refresh_rate: 99.0
 debug_mode: false
                                                    
-# mesh_resource : "package://odom_visualization/meshes/hummingbird.mesh"
-mesh_resource : "package://odom_visualization/meshes/ins_khex.stl"
+mesh_resource : "package://odom_visualization/meshes/hummingbird.mesh"
+# mesh_resource : "package://odom_visualization/meshes/ins_khex.stl"
 frame_id : "vicon"
-path_color_r : 0.70   
-path_color_g : 0.70   
-path_color_b : 0.10   
-path_color_a : 0.10   
 mesh_color_r : 0.2
 mesh_color_g : 0.9   
 mesh_color_b : 0.1   
@@ -21,6 +17,6 @@ vel_color_g  : 0.90
 vel_color_b  : 0.90   
 vel_color_a  : 0.7   
 max_path_len : 999.0
-mesh_scale : .1
-cov_scale : 1000000000.0
+mesh_scale : 1
+cov_scale : 100.0
 

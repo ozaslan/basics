@@ -33,10 +33,9 @@ ros::Subscriber odom_subs;
 
 string mesh_resource;
 string frame_id;
-Eigen::Vector4d path_color, 
-	cov_color,
-	vel_color,
-	mesh_color;
+Eigen::Vector4d cov_color,
+				vel_color,
+				mesh_color;
 
 nav_msgs::Path path_msg;
 nav_msgs::Odometry odom_msg;
@@ -77,10 +76,6 @@ void process_inputs(const ros::NodeHandle &n){
 
 	n.param("mesh_resource", mesh_resource	 , string("package://odom_visualization/meshes/ins_khex.stl"));
 	n.param("frame_id"	, frame_id, string("world"));
-	n.param("path_color_r", path_color(0), 1.0);
-	n.param("path_color_g", path_color(1), 0.0);
-	n.param("path_color_b", path_color(2), 0.0);
-	n.param("path_color_a", path_color(3), 1.0);
 	n.param("mesh_color_r", mesh_color(0), 1.0);
 	n.param("mesh_color_g", mesh_color(1), 0.0);
 	n.param("mesh_color_b", mesh_color(2), 0.0);
@@ -104,7 +99,6 @@ void process_inputs(const ros::NodeHandle &n){
 	ROS_INFO("[max_path_len] ------ : [%.3f]", max_path_len);
 	ROS_INFO("[mesh, cov]_scale --- : [%.3f, %.3f]", mesh_scale, cov_scale);
 	ROS_INFO("[mesh_color (rgba)] - : [%.3f, %.3f, %.3f, %.3f]", mesh_color(0), mesh_color(1), mesh_color(2), mesh_color(3));
-	ROS_INFO("[path_color (rgba)] - : [%.3f, %.3f, %.3f, %.3f]", path_color(0), path_color(1), path_color(2), path_color(3));
 	ROS_INFO("[cov_color (rgba)] -- : [%.3f, %.3f, %.3f, %.3f]", cov_color(0), cov_color(1), cov_color(2), cov_color(3));
 	ROS_INFO("[vel_color (rgba)] -- : [%.3f, %.3f, %.3f, %.3f]", vel_color(0), vel_color(1), vel_color(2), vel_color(3));
 	ROS_INFO(" ----------------------------------------");
@@ -206,15 +200,21 @@ void publish_covariance(){
 	for(int r = 0 ; r < 3 ; r++)
 		for(int c = 0 ; c < 3 ; c++)
 			cov(r, c) = odom_msg.pose.covariance[r * 6 + c];
-	// Transform the covariance into the body frame
-	Eigen::Matrix3d dcm = utils::trans::odom2se3(odom_msg).topLeftCorner<3, 3>();
-	cov(0, 0) *= 2;
 
-	cov = dcm.transpose() * cov * dcm;
+	SelfAdjointEigenSolver<Matrix3d> es(cov);
 
-	cov_msg.scale.x = cov(0, 0) * cov_scale;
-	cov_msg.scale.y = cov(1, 1) * cov_scale;
-	cov_msg.scale.z = cov(2, 2) * cov_scale;
+	Eigen::Matrix3d evecs = es.eigenvectors();
+	Eigen::Vector3d evals = es.eigenvalues();
+	
+	Eigen::Vector4d quat = utils::trans::dcm2quat(evecs);
+	cov_msg.pose.orientation.w = quat(0);
+	cov_msg.pose.orientation.x = quat(1);
+	cov_msg.pose.orientation.y = quat(2);
+	cov_msg.pose.orientation.z = quat(3);
+	
+	cov_msg.scale.x = evals(0) * cov_scale;
+	cov_msg.scale.y = evals(1) * cov_scale;
+	cov_msg.scale.z = evals(2) * cov_scale;
 	cov_msg.color.r = cov_color(0);
 	cov_msg.color.g = cov_color(1);
 	cov_msg.color.b = cov_color(2);
