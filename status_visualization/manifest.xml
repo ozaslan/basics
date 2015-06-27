@@ -1,0 +1,19 @@
+<package>
+  <description brief="status_visualization">
+
+     status_visualization
+
+  </description>
+  <author>ozaslan</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/status_visualization</url>
+  <depend package="roscpp"/>
+  <depend package="com_msgs"/>
+  <depend package="rc_nav"/>
+  <depend package="utils"/>
+  <depend package="cv_bridge"/>
+
+</package>
+
+
