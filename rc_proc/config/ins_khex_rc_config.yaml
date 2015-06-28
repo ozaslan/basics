@@ -7,17 +7,22 @@
 # If normalization is set to true, the raw data
 # is normalized to a value between [-1, 1]
 
-dead_zone_x: 15
-dead_zone_y: 15
-dead_zone_z: 20
+dead_zone_x:   15
+dead_zone_y:   15
+dead_zone_z:   20
 dead_zone_psi: 15
-min_x: 0
-max_x: 1000
-min_y: 0
-max_y: 1000
-min_z: 0
-max_z: 1000
+min_x:   0
+max_x:   1000
+min_y:   0
+max_y:   1000
+min_z:   0
+max_z:   1025
 min_psi: 0
 max_psi: 1000
-normalize: true
+normalize:   true
+
+reverse_x:   true
+reverse_y:   false
+reverse_z:   true
+reverse_psi: false
 
