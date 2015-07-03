@@ -1,0 +1,23 @@
+<package>
+  <description brief="basics_pkg">
+
+     basics_pkg
+
+  </description>
+  <author>ozaslan</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/basics_pkg</url>
+  <depend package="cpu_usage"/>
+  <depend package="csm"/>
+  <depend package="laser_proc"/>
+  <depend package="odom_visualization"/>
+  <depend package="rc_proc"/>
+  <depend package="status_visualization"/>
+  <depend package="uniform_feat_tracker"/>
+  <depend package="utils"/>
+  <depend package="vicon_odom"/>
+
+</package>
+
+
