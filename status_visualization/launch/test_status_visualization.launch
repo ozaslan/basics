@@ -1,0 +1,55 @@
+<launch>
+
+### Start the RC Navigator node
+
+<param name = "use_sim_time" value = "true" />
+<!--
+<arg name="bagfile_path"  value="$(env ROS_DATASET_PATH)/temp/vicon_2015-06-25-15-40-17.bag" />
+-->
+<arg name="bagfile_path"  value="$(env ROS_DATASET_PATH)/statefarm_dataset/mrsl03.bag" />
+
+<node	pkg ="rosbag"
+		name  ="rosbag"
+		type  ="play"
+    output="screen"
+    args  ="--loop --rate=1.0 $(arg bagfile_path) --start=0 --duration=10000 --clock ">
+</node>
+-->
+
+<node pkg    = "status_visualization"
+	  name   = "status_visualization"
+	  type   = "status_visualization_node"
+	  output = "screen" >
+
+	<remap from="~rc"     to="/khex/rc" />
+	<remap from="~status" to="/khex/status" />
+    <rosparam file="$(find status_visualization)/presets/ins_khex_status_config.yaml" />
+	<param name="refresh_rate"   value="25.0" />
+	<param name="debug_mode"     value="FALSE" />
+	<param name="rc_config_path" value="$(find rc_proc)/config/ins_khex_rc_config.yaml" />
+	<param name="panel_path"     value= "$(find status_visualization)/presets/panel.png" />
+</node>
+
+<node pkg  = "image_view"
+	  name = "image_view"
+	  type = "image_view"
+	  output = "screen" 
+	  args="image:=/status_visualization/panel" >
+</node>
+
+</launch>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
