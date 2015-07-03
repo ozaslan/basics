@@ -1,9 +1,9 @@
 <package>
   <description brief="utils">
      Utilities library for 
-	- rotation transformations
-	- laser scan processing
-	- ...
+	 rotation transformations
+	 laser scan processing
+	 ...
   </description>
   <author>Salih Tolga Ozaslan</author>
   <license>BSD</license>
@@ -16,6 +16,7 @@
   <depend package="cv_bridge"/>
   <depend package="csm"/>
   <export>
-	<cpp cflags="-I${prefix}/include" lflags="-L${prefix}/lib -lutils"/> 
+    <cpp cflags="`pkg-config --cflags eigen3` -I${prefix}/include" 
+         lflags="-L${prefix}/lib -lutils"/>
   </export>
 </package>
