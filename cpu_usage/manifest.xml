@@ -1,0 +1,15 @@
+<package>
+  <description brief="cpu_usage">
+
+     cpu_usage
+
+  </description>
+  <author>ozaslan</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/cpu_usage</url>
+  <depend package="roscpp"/>
+
+</package>
+
+
