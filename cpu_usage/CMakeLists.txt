@@ -22,9 +22,9 @@ rosbuild_genmsg()
 #rosbuild_gensrv()
 
 #common commands for building c++ executables and libraries
-#rosbuild_add_library(${PROJECT_NAME} src/example.cpp)
+rosbuild_add_library(${PROJECT_NAME} src/${PROJECT_NAME}.cc)
 #target_link_libraries(${PROJECT_NAME} another_library)
 #rosbuild_add_boost_directories()
 #rosbuild_link_boost(${PROJECT_NAME} thread)
 rosbuild_add_executable(${PROJECT_NAME}_node src/${PROJECT_NAME}_node.cc)
-#target_link_libraries(example ${PROJECT_NAME})
+target_link_libraries(${PROJECT_NAME}_node ${PROJECT_NAME})
