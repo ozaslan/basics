@@ -5,7 +5,7 @@
   <!--
   <arg name="bagfile_path"  value="$(env ROS_DATASET_PATH)/temp/vicon_2015-06-25-15-40-17.bag" />
   -->
-  <arg name="bagfile_path"  value="$(env ROS_DATASET_PATH)/statefarm_dataset/mrsl03.bag" />
+  <arg name="bagfile_path"  value="$(env ROS_DATASET_PATH)/statefarm_dataset/mrsl03.bag___" />
 
   <node name="rosbag"
         pkg="rosbag"
@@ -19,7 +19,7 @@
         type="odom_visualization_node"
         output="screen" >
 
-    <remap from="~odom" to="/vicon/odom/InsKHex"/>
+    <remap from="~odom" to="/vicon/InsKHex_odom"/>
     <rosparam file="$(find odom_visualization)/config/config01.yaml" />
 
   </node>

@@ -133,12 +133,14 @@ int process_inputs(const ros::NodeHandle &n)
   inRange(panel, cv::Scalar(255 , 255, 0), cv::Scalar(255, 255, 0), temp);
   findContours(temp, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0) );
   roi_sticks = cv::boundingRect( cv::Mat(contours[0]) );
-
+  
+  /*
   cout << roi_title << endl;
   cout << roi_voltage << endl;
   cout << roi_cpu << endl;
   cout << roi_sticks << endl;
   cout << roi_current << endl;
+  */
 
   // ------------------------------------------------------------------- //
 
@@ -335,7 +337,7 @@ void publish_panel(){
       roi_cpu_bar.height = roi_cpu.height * cpu_load[i] / 100.0;
       roi_cpu_bar.y = roi_cpu.y + roi_cpu.height - roi_cpu_bar.height;
       cv::rectangle(temp_panel, roi_cpu_bar, cv::Scalar(255, 0, 0), -1);
-      cout << roi_cpu_bar << endl;
+      //cout << roi_cpu_bar << endl;
     }
   }
 
