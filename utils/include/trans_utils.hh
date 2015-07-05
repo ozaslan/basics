@@ -5,11 +5,14 @@
 
 namespace utils{
 	namespace trans{
-    // This function converts an SE(3) to nav_msgs::Odomety structure
+		// The below two functions transform between representations of ROS and Eigen vectors
+		geometry_msgs::Quaternion quat2quat(const Eigen::Vector4d &quat);
+		Eigen::Vector4d quat2quat(const geometry_msgs::Quaternion &quat);
+		// This function converts an SE(3) to nav_msgs::Odomety structure
 		// its corresponding SE(3) matrix. Hence this only handles
 		// rotation and position. Other fields should be filled by 
-    // the programmer.
-    nav_msgs::Odometry se32odom(const Eigen::Matrix4d &se3, bool cancel_yaw = false);
+		// the programmer.
+		nav_msgs::Odometry se32odom(const Eigen::Matrix4d &se3, bool cancel_yaw = false);
 		// This function converts nav_msgs::Odomety structure into 
 		// its corresponding SE(3) matrix. Hence this only handles
 		// rotation and position.
@@ -18,7 +21,7 @@ namespace utils{
 		// its corresponding SO(3) martix. Hence this only handels
 		// orientation.
 		Matrix3d imu2dcm(const sensor_msgs::Imu &imu, bool cancel_yaw = false);
-    // This function converts the sensor_msgs::Imu structure into
+		// This function converts the sensor_msgs::Imu structure into
 		// its corresponding roll-pitch-yaw reps. Hence this only handels
 		// orientation.
 		Vector3d imu2rpy(const sensor_msgs::Imu &imu, bool cancel_yaw = false);

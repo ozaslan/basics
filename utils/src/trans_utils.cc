@@ -2,7 +2,21 @@
 
 namespace utils{
 	namespace trans{
-		nav_msgs::Odometry se32odom(const Eigen::Matrix4d &se3, bool cncl_yaw){
+  
+    geometry_msgs::Quaternion quat2quat(const Eigen::Vector4d &quat){
+      geometry_msgs::Quaternion orient;
+      orient.w = quat(0);
+      orient.x = quat(1);
+      orient.y = quat(2);
+      orient.z = quat(3);
+      return orient;
+    }
+
+		Eigen::Vector4d quat2quat(const geometry_msgs::Quaternion &quat){
+      return Eigen::Vector4d(quat.w, quat.x, quat.y, quat.z);
+    }
+
+    nav_msgs::Odometry se32odom(const Eigen::Matrix4d &se3, bool cncl_yaw){
 			nav_msgs::Odometry odom;
 			odom.pose.pose.position.x = se3(0, 3);
 			odom.pose.pose.position.y = se3(1, 3);

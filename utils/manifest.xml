@@ -10,6 +10,7 @@
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/utilities</url>
   <depend package="roscpp"/>
+  <depend package="geometry_msgs"/>
   <depend package="sensor_msgs"/>
   <depend package="nav_msgs"/>
   <rosdep name="eigen" />
