@@ -3,7 +3,8 @@ debug_mode: false
                                                    
 mesh_resource : "package://odom_visualization/meshes/hummingbird.mesh"
 # mesh_resource : "package://odom_visualization/meshes/ins_khex.stl"
-frame_id : "world"
+tf_frame_from: "world"
+tf_frame_to  : "robot_ukf"
 mesh_color_r : 0.9
 mesh_color_g : 0.1   
 mesh_color_b : 0.2   

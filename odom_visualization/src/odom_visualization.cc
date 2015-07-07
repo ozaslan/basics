@@ -32,7 +32,7 @@ ros::Publisher mesh_publ,
 ros::Subscriber odom_subs;
 
 string mesh_resource;
-string frame_id;
+string tf_frame_from, tf_frame_to;
 Eigen::Vector4d cov_color,
 				vel_color,
 				mesh_color;
@@ -74,28 +74,30 @@ void process_inputs(const ros::NodeHandle &n){
 	n.param("refresh_rate", refresh_rate, 100.0);
 	n.param("debug_mode", debug_mode, false);
 
-	n.param("mesh_resource", mesh_resource	 , string("package://odom_visualization/meshes/ins_khex.stl"));
-	n.param("frame_id"	, frame_id, string("world"));
-	n.param("mesh_color_r", mesh_color(0), 1.0);
-	n.param("mesh_color_g", mesh_color(1), 0.0);
-	n.param("mesh_color_b", mesh_color(2), 0.0);
-	n.param("mesh_color_a", mesh_color(3), 1.0);
-	n.param("cov_color_r" , cov_color(0) , 1.0);
-	n.param("cov_color_g" , cov_color(1) , 0.0);
-	n.param("cov_color_b" , cov_color(2) , 0.0);
-	n.param("cov_color_a" , cov_color(3) , 1.0);
-	n.param("vel_color_r" , vel_color(0) , 1.0);
-	n.param("vel_color_g" , vel_color(1) , 0.0);
-	n.param("vel_color_b" , vel_color(2) , 0.0);
-	n.param("vel_color_a" , vel_color(3) , 1.0);
-	n.param("max_path_len", max_path_len , 1000.0);
-	n.param("mesh_scale"  , mesh_scale   , 1.0);
-	n.param("cov_scale"   , cov_scale    , 1.0);
+	n.param("mesh_resource", mesh_resource, string("package://odom_visualization/meshes/ins_khex.stl"));
+	n.param("tf_frame_from", tf_frame_from, string("world"));
+	n.param("tf_frame_to"  , tf_frame_to  , string("robot"));
+	n.param("mesh_color_r" , mesh_color(0), 1.0);
+	n.param("mesh_color_g" , mesh_color(1), 0.0);
+	n.param("mesh_color_b" , mesh_color(2), 0.0);
+	n.param("mesh_color_a" , mesh_color(3), 1.0);
+	n.param("cov_color_r"  , cov_color(0) , 1.0);
+	n.param("cov_color_g"  , cov_color(1) , 0.0);
+	n.param("cov_color_b"  , cov_color(2) , 0.0);
+	n.param("cov_color_a"  , cov_color(3) , 1.0);
+	n.param("vel_color_r"  , vel_color(0) , 1.0);
+	n.param("vel_color_g"  , vel_color(1) , 0.0);
+	n.param("vel_color_b"  , vel_color(2) , 0.0);
+	n.param("vel_color_a"  , vel_color(3) , 1.0);
+	n.param("max_path_len" , max_path_len , 1000.0);
+	n.param("mesh_scale"   , mesh_scale   , 1.0);
+	n.param("cov_scale"    , cov_scale    , 1.0);
 
 	ROS_INFO(" ---------- ODOM VISUALIZATION ------------");
 	ROS_INFO("[refresh_rate] ------ : [%.3f - (doesn't run on fixed rate)]", refresh_rate);
 	ROS_INFO("[debug_mode] -------- : [%s]", debug_mode ? "TRUE" : "FALSE");
 	ROS_INFO("[mesh_resource] ----- : [%s]", mesh_resource.c_str());
+	ROS_INFO("tf_frame_[from, to] - : [%s, %s]", tf_frame_from.c_str(), tf_frame_to.c_str());
 	ROS_INFO("[max_path_len] ------ : [%.3f]", max_path_len);
 	ROS_INFO("[mesh, cov]_scale --- : [%.3f, %.3f]", mesh_scale, cov_scale);
 	ROS_INFO("[mesh_color (rgba)] - : [%.3f, %.3f, %.3f, %.3f]", mesh_color(0), mesh_color(1), mesh_color(2), mesh_color(3));
@@ -139,7 +141,7 @@ void publish_mesh(){
 		ROS_INFO("ODOM VISUALIZATION : Publish Mesh Data");
 
 	mesh_msg.header.stamp = ros::Time::now();
-	mesh_msg.header.frame_id = frame_id;
+	mesh_msg.header.frame_id = tf_frame_from;
 	mesh_msg.header.seq++;
 	mesh_msg.ns = "odom_visualization";
 	mesh_msg.id = 0;
@@ -165,7 +167,7 @@ void publish_path(){
 		ROS_INFO("ODOM VISUALIZATION : Publish Path Data");
 
 	path_msg.header.stamp = ros::Time::now();
-	path_msg.header.frame_id = frame_id;
+	path_msg.header.frame_id = tf_frame_from;
 	path_msg.header.seq++;
 
 	geometry_msgs::PoseStamped pose_stamped;
@@ -187,7 +189,7 @@ void publish_covariance(){
 		ROS_INFO("ODOM VISUALIZATION : Publish Covariance Visuals");
 
 	cov_msg.header.stamp = ros::Time::now();
-	cov_msg.header.frame_id = frame_id;
+	cov_msg.header.frame_id = tf_frame_from;
 	cov_msg.header.seq++;
 	cov_msg.ns = "cov";
 	cov_msg.id = 0;
@@ -248,7 +250,7 @@ void publish_tf(){
 			odom_msg.pose.pose.orientation.z,
 			odom_msg.pose.pose.orientation.w);
 	transform.setRotation(q);
-	tf_br->sendTransform(tf::StampedTransform(transform, ros::Time::now(), frame_id, "robot"));
+	tf_br->sendTransform(tf::StampedTransform(transform, ros::Time::now(), tf_frame_from, tf_frame_to));
 }
 
 void publish_velocity(){
@@ -256,7 +258,7 @@ void publish_velocity(){
 		ROS_INFO("ODOM VISUALIZATION : Publish Velocity");
 
 	vel_msg.header.stamp = ros::Time::now();
-	vel_msg.header.frame_id = frame_id;
+	vel_msg.header.frame_id = tf_frame_from;
 	vel_msg.header.seq++;
 	vel_msg.ns = "vel";
 	vel_msg.id = 0;
@@ -312,7 +314,7 @@ void publish_pose(){
 		ROS_INFO("ODOM VISUALIZATION : Publish Pose");
 
 	pose_msg.header.stamp = ros::Time::now();
-	pose_msg.header.frame_id = frame_id;
+	pose_msg.header.frame_id = tf_frame_from;
 	pose_msg.header.seq++;
 
 	pose_msg.pose = odom_msg.pose;
