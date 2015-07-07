@@ -60,8 +60,12 @@ namespace utils{
     std::exit(EXIT_FAILURE); \
   } \
 
-#define DEG2RAD(x) ((x) / 180.0 * PI)
-#define RAD2DEG(x) ((x) / PI * 180.0)
+#ifndef DEG2RAD
+  #define DEG2RAD(x) ((x) / 180.0 * PI)
+#endif
+#ifndef RAD2DEG
+  #define RAD2DEG(x) ((x) / PI * 180.0)
+#endif
 
   // The 'utils' namespace implements utility functions which cannot
   // be categorized into a specific class of helper routines. However

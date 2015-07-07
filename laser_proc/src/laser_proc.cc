@@ -671,7 +671,6 @@ bool LaserProc::get_RVIZ_markers(visualization_msgs::MarkerArray &marray) const 
   return true;
 }
 
-
 const vector<pair<int, int> >& LaserProc::get_line_indexes() const {
   return _line_idxs; 
 }

@@ -1,7 +1,6 @@
 #ifndef __LASER_PROC_HH__
 #define __LASER_PROC_HH__
 
-//#include <ros/ros.h>
 #include <sensor_msgs/Imu.h>
 #include <sensor_msgs/LaserScan.h>
 #include <sensor_msgs/PointCloud.h>
@@ -62,7 +61,7 @@ class LaserProc{
            _sec, _nsec;                // same as the ROS LaserScan message fields.
     vector<double> _intensities;		// '' 
     vector<double> _ranges;             // stores the ranges. Overwritten if necessary.
-	vector<double> _thetas;				// stores the array of angles corresponding to each range value.
+    vector<double> _thetas;				// stores the array of angles corresponding to each range value.
     vector<double> _temp_ranges;        // used in median filter and other function where the original 
     // data has to be kept unmodified till the end of the process, filtering.
     LidarCalibParams _params;           // saves a copy of the parameter set.
@@ -148,16 +147,16 @@ class LaserProc{
     // working in environment which have low-reflectance surfaces
     // and fail the tailed estimators.
     const vector<int>& intensity_filter(double intensity_thres = 1000);
-	// This function masks out the points those are greater (smaller) than
-	// 'linearity_thres' if 'upper_bound == true' ('upper_bound == false').
-	// This returns a constant reference to the resultant '_mask' vector.
-	// The programmer is assumed to have called  'rate_linearity()' before
-	// this function is called.
-	const vector<int>& linearity_filter(double linearity_thres = 0.3, bool upper_bound = true);
+    // This function masks out the points those are greater (smaller) than
+    // 'linearity_thres' if 'upper_bound == true' ('upper_bound == false').
+    // This returns a constant reference to the resultant '_mask' vector.
+    // The programmer is assumed to have called  'rate_linearity()' before
+    // this function is called.
+    const vector<int>& linearity_filter(double linearity_thres = 0.3, bool upper_bound = true);
     // This function removes rays such that no two ray tips are closer
     // than 'range_thres' meters to each other.
     // Returns a constant reference to '_mask'.
-	const vector<int>& downsample(double range_thres = 0.05);
+    const vector<int>& downsample(double range_thres = 0.05);
     // This function checks for significant jumpes on the ranges.
     // If consecutive rays differ in their ranges significantly, 
     // the farther point is assumed to be occluded 
@@ -227,11 +226,11 @@ class LaserProc{
     // This function returns a constant reference to the ranges array.
     // The vector is of the same size a the '_mask' array.
     const vector<double>& get_ranges() const;
-	// This function returns the angle coordinates of the 
-	// ranges. This is mostly used with other functions suchs as
-	// utils::laser::register(...). As long as the laser source
-	// does not chance, angles are not re-calculated hence does not
-	// cause extra load.
+    // This function returns the angle coordinates of the 
+    // ranges. This is mostly used with other functions suchs as
+    // utils::laser::register(...). As long as the laser source
+    // does not chance, angles are not re-calculated hence does not
+    // cause extra load.
     const vector<double>& get_thetas() const;
     // This function returns the Fisher Information Matrix calculated 
     // using the method given in Andrea Censi's ICRA07 paper. This takes

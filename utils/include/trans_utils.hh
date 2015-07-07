@@ -12,41 +12,41 @@ namespace utils{
 		// its corresponding SE(3) matrix. Hence this only handles
 		// rotation and position. Other fields should be filled by 
 		// the programmer.
-		nav_msgs::Odometry se32odom(const Eigen::Matrix4d &se3, bool cancel_yaw = false);
+		nav_msgs::Odometry se32odom(const Eigen::Matrix4d &se3, bool cancel_yaw = false, const Eigen::Matrix6d &cov = Eigen::Matrix6d::Identity());
 		// This function converts nav_msgs::Odomety structure into 
 		// its corresponding SE(3) matrix. Hence this only handles
 		// rotation and position.
-		Matrix4d odom2se3(const nav_msgs::Odometry &odom, bool cancel_yaw = false);
+		Eigen::Matrix4d odom2se3(const nav_msgs::Odometry &odom, bool cancel_yaw = false);
 		// This function converts the sensor_msgs::Imu structure into
 		// its corresponding SO(3) martix. Hence this only handels
 		// orientation.
-		Matrix3d imu2dcm(const sensor_msgs::Imu &imu, bool cancel_yaw = false);
+		Eigen::Matrix3d imu2dcm(const sensor_msgs::Imu &imu, bool cancel_yaw = false);
 		// This function converts the sensor_msgs::Imu structure into
 		// its corresponding roll-pitch-yaw reps. Hence this only handels
 		// orientation.
-		Vector3d imu2rpy(const sensor_msgs::Imu &imu, bool cancel_yaw = false);
+		Eigen::Vector3d imu2rpy(const sensor_msgs::Imu &imu, bool cancel_yaw = false);
 		// This function converts geometry_msgs::Pose structure into 
 		// its corresponding SE(3) matrix. Hence this only handles
 		// rotation and position.
-		Matrix4d pose2se3(const geometry_msgs::Pose &pose, bool cancel_yaw = false);
+		Eigen::Matrix4d pose2se3(const geometry_msgs::Pose &pose, bool cancel_yaw = false);
 		// The following functions transform between different
 		// rotation representations.
-		Matrix3d yaw2dcm(const double &yaw);
-		Matrix3d quat2dcm(const Vector4d &quat);
-		Vector3d quat2rpy(const Vector4d &quat);
-		Matrix3d rpy2dcm (const Vector3d &rpy);
-		Vector4d rpy2quat(const Vector3d &rpy);
-		Vector4d dcm2quat(const Matrix3d &dcm);
-		Vector3d dcm2rpy (const Matrix3d &dcm);
+		Eigen::Matrix3d yaw2dcm(const double &yaw);
+		Eigen::Matrix3d quat2dcm(const Eigen::Vector4d &quat);
+		Eigen::Vector3d quat2rpy(const Eigen::Vector4d &quat);
+		Eigen::Matrix3d rpy2dcm (const Eigen::Vector3d &rpy);
+		Eigen::Vector4d rpy2quat(const Eigen::Vector3d &rpy);
+		Eigen::Vector4d dcm2quat(const Eigen::Matrix3d &dcm);
+		Eigen::Vector3d dcm2rpy (const Eigen::Matrix3d &dcm);
 
 		// The following functions cancel the yaw component
 		// from the given rotation.
-		Matrix3d cancel_yaw(const Matrix3d &dcm );
-		Vector4d cancel_yaw(const Vector4d &quat);
+		Eigen::Matrix3d cancel_yaw(const Eigen::Matrix3d &dcm );
+		Eigen::Vector4d cancel_yaw(const Eigen::Vector4d &quat);
 
 		// ### This function interpolates quaternions using the 
 		// SLERP algorithm.
-		Vector3d slerp(const Vector3d &quat1, const Vector3d &quat2, double theta);
+		Eigen::Vector3d slerp(const Eigen::Vector3d &quat1, const Eigen::Vector3d &quat2, double theta);
 	}
 }
 

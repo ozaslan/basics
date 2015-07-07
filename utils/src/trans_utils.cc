@@ -16,7 +16,7 @@ namespace utils{
       return Eigen::Vector4d(quat.w, quat.x, quat.y, quat.z);
     }
 
-    nav_msgs::Odometry se32odom(const Eigen::Matrix4d &se3, bool cncl_yaw){
+    nav_msgs::Odometry se32odom(const Eigen::Matrix4d &se3, bool cncl_yaw, const Eigen::Matrix6d &cov){
 			nav_msgs::Odometry odom;
 			odom.pose.pose.position.x = se3(0, 3);
 			odom.pose.pose.position.y = se3(1, 3);
@@ -26,6 +26,10 @@ namespace utils{
 			odom.pose.pose.orientation.x = quat(1);
 			odom.pose.pose.orientation.y = quat(2);
 			odom.pose.pose.orientation.z = quat(3);
+
+      for(int r = 0 ; r < 6 ; r++)
+        for(int c = 0 ; c < 6 ; c++)
+          odom.pose.covariance[r * 6 + c] = cov(r, c);
 
 			return odom;
 		}
