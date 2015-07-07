@@ -1,0 +1,22 @@
+refresh_rate: 99.0
+debug_mode: false
+                                                   
+mesh_resource : "package://odom_visualization/meshes/hummingbird.mesh"
+# mesh_resource : "package://odom_visualization/meshes/ins_khex.stl"
+frame_id : "world"
+mesh_color_r : 0.9
+mesh_color_g : 0.1   
+mesh_color_b : 0.2   
+mesh_color_a : 1.0
+cov_color_r  : 0.20   
+cov_color_g  : 0.50   
+cov_color_b  : 0.30   
+cov_color_a  : 0.7   
+vel_color_r  : 0.90   
+vel_color_g  : 0.90   
+vel_color_b  : 0.70   
+vel_color_a  : 0.7
+max_path_len : 999.0
+mesh_scale : 1
+cov_scale : 250.0
+

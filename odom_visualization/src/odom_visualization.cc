@@ -205,8 +205,17 @@ void publish_covariance(){
 
 	Eigen::Matrix3d evecs = es.eigenvectors();
 	Eigen::Vector3d evals = es.eigenvalues();
-	
+
+  double det = evecs.determinant();
+  if(det < 0)
+    evecs.topLeftCorner<3, 1>() *= -1;
+
+  //cout << "COW = [" << cov << "];" << endl;
+  //cout << "evecs = [" << evecs << "];" << endl;
+  //cout << "evals = [" << evals << "];" << endl;
+
 	Eigen::Vector4d quat = utils::trans::dcm2quat(evecs);
+
 	cov_msg.pose.orientation.w = quat(0);
 	cov_msg.pose.orientation.x = quat(1);
 	cov_msg.pose.orientation.y = quat(2);
