@@ -60,6 +60,8 @@ namespace utils{
     std::exit(EXIT_FAILURE); \
   } \
 
+#define PRINT_FLF {cout << "File : " << __FILE__ << " Line # : " << __LINE__ << " Func : " << __func__ << endl;}
+
 #ifndef DEG2RAD
   #define DEG2RAD(x) ((x) / 180.0 * PI)
 #endif

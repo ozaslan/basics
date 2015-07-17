@@ -100,7 +100,8 @@ int UniformFeatureExtractor::extract_features(const cv::Mat &img, vector<Point2f
 	// Add the strongest 13 of the keypoints unconditionally. 
 	// (*) Then starting from the patch which has the least features, 
 	// add new keypoints to the output list.
-	for(int i = 0 ; i < 13 && (int)features.size() < _max_num_feats ; i++){
+  int offset = 1;
+	for(int i = 0 ; i < offset && (int)features.size() < _max_num_feats ; i++){
 	  if(_mask.at<char>(keypoints[i].pt.y, keypoints[i].pt.x) == 0)
 	      continue;
 		features.push_back(keypoints[i].pt);
@@ -112,7 +113,7 @@ int UniformFeatureExtractor::extract_features(const cv::Mat &img, vector<Point2f
 	debug_msg("B6")
 
 	if(_force_uniformity == false){
-		for(int i = 13 ; i < (int)keypoints.size() && (int)features.size() < _max_num_feats ; i++){
+		for(int i = offset ; i < (int)keypoints.size() && (int)features.size() < _max_num_feats ; i++){
 			if(is_fast == false) {
 				features.push_back(keypoints[i].pt);
 			} else {

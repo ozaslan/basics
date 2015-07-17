@@ -5,7 +5,7 @@
 
 #define DEBUG 0
 #if DEBUG
-	#define debug_msg(A) {cout << "---- " << A << endl;}
+	#define debug_msg(A) {cout << "---- " << A << endl; fflush(NULL);}
 #else
 	#define debug_msg(A) {}
 #endif
@@ -33,6 +33,7 @@ UniformFeatureTracker::UniformFeatureTracker(int max_num_feats, int max_hist_len
 	_max_flow_rate = 120;
 	_num_stddevs = 3;
 	_max_age = 300000; // Why?
+  _curr_frame_idx = 0;
 	_initialize();
 }
 
@@ -116,6 +117,7 @@ int UniformFeatureTracker::track_features(const cv::Mat &img, UniformFeatureExtr
 	// ******************* TRACK EXSITING FEATURES ************************** //		
 	// Do we have a 'previous frame'?
 	debug_msg("A2")
+  //cout << "_is_initialized.size() = " << _is_initialized.size() << endl;
 	if(_is_initialized[_prev_frame_idx] == true){
 		if(_num_tracked_feats != 0){
 			debug_msg("A2.1")
@@ -127,7 +129,7 @@ int UniformFeatureTracker::track_features(const cv::Mat &img, UniformFeatureExtr
 				if(_start_frame_idx[i] != -1)
 					temp_feats_prev.push_back(_feat_history_grid[_prev_frame_idx][i]);
 			debug_msg("A2.2")
-
+    
 			//ros::Time time_start, time_end;
 			//time_start = ros::Time::now();
 			calcOpticalFlowPyrLK(_frames[_prev_frame_idx], _frames[_curr_frame_idx], 
