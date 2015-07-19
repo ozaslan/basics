@@ -16,6 +16,7 @@
   <depend package="status_visualization"/>
   <depend package="uniform_feat_tracker"/>
   <depend package="utils"/>
+  <depend package="pose_utils"/>
   <depend package="vicon_odom"/>
 
 </package>

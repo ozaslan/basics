@@ -294,7 +294,7 @@ void publish_velocity(){
 	vel_msg.pose.orientation.y = quat(2);
 	vel_msg.pose.orientation.z = quat(3);
 
-	vel_msg.scale.x = vel_norm;
+	vel_msg.scale.x = vel_norm + 0.05;
 	vel_msg.scale.y = .05;
 	vel_msg.scale.z = .05;
 	vel_msg.color.r = vel_color(0);

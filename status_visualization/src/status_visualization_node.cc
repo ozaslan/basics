@@ -173,6 +173,9 @@ void rc_callback(const com_msgs::RC &msg){
     ROS_INFO("RC NAV : Got RC message!");
 
   rc_proc.process(msg, rc_vals);
+  for(int i = 0 ; i < (int)rc_vals.size() ; i++)
+    rc_vals[i] *= -1;
+
 }
 
 void status_callback(const com_msgs::Status &msg){
