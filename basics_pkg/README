@@ -1,0 +1,1 @@
+This is a meta-node included to ease compilation of other packages in the repository. Making this package compiles all other packages due to the dependency relations. 
