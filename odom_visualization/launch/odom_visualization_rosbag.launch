@@ -1,7 +1,7 @@
 <launch>
 
   <param name = "use_sim_time" value = "true" />
-  <arg name="bagfile_path"  value="$(env ROS_DATASET_PATH)/temp/vicon_2015-06-28-17-13-56.bag" />
+  <arg name="bagfile_path"  value="$(env ROS_DATASET_PATH)/glen_canyon_22July2015_after_lunch/04.bag" />
 
   <!--
   <arg name="bagfile_path"  value="$(env ROS_DATASET_PATH)/statefarm_dataset/mrsl03.bag" />
@@ -19,8 +19,8 @@
         type="odom_visualization_node"
         output="screen" >
 
-    <remap from="~odom" to="/vicon/InsKHex_odom"/>
-    <rosparam file="$(find odom_visualization)/config/config01.yaml" />
+    <remap from="~odom" to="/tunnel_localizer/odom_out"/>
+    <rosparam file="$(find odom_visualization)/config/config03.yaml" />
 
   </node>
 

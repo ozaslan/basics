@@ -26,6 +26,7 @@ double cov_scale;
 tf::TransformBroadcaster *tf_br;
 ros::Publisher mesh_publ,
 	pose_publ,
+  pose2_publ,
 	path_publ,
 	cov_publ,
 	vel_publ;
@@ -40,6 +41,7 @@ Eigen::Vector4d cov_color,
 nav_msgs::Path path_msg;
 nav_msgs::Odometry odom_msg;
 geometry_msgs::PoseWithCovarianceStamped pose_msg;
+geometry_msgs::PoseStamped pose2_msg;
 visualization_msgs::Marker mesh_msg;
 visualization_msgs::Marker vel_msg;
 visualization_msgs::Marker cov_msg;
@@ -110,7 +112,8 @@ void setup_messaging_interface(ros::NodeHandle &n)
 {
 	path_publ = n.advertise<nav_msgs::Path>("path", 10);
 	mesh_publ = n.advertise<visualization_msgs::Marker>("mesh", 10);
-	pose_publ = n.advertise<geometry_msgs::PoseWithCovarianceStamped>("pose", 10);
+	pose_publ  = n.advertise<geometry_msgs::PoseWithCovarianceStamped>("pose", 10);
+	pose2_publ = n.advertise<geometry_msgs::PoseStamped>("pose2", 10);
 	cov_publ  = n.advertise<visualization_msgs::Marker>("cov", 10);
 	vel_publ  = n.advertise<visualization_msgs::Marker>("vel", 10);
 	odom_subs = n.subscribe("odom", 10, odom_callback, ros::TransportHints().tcpNoDelay()); 
@@ -320,5 +323,10 @@ void publish_pose(){
 	pose_msg.pose = odom_msg.pose;
 
 	pose_publ.publish(pose_msg);
+
+  pose2_msg.header = pose_msg.header;
+  pose2_msg.pose = pose_msg.pose.pose;
+	pose2_publ.publish(pose2_msg);
+
 }
 

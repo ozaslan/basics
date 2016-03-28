@@ -7,10 +7,8 @@ Panels:
         - /Global Options1
         - /Status1
         - /Mesh1
-        - /Mesh1/Status1
         - /Path1
         - /Axes1
-        - /Axes1/Status1
       Splitter Ratio: 0.5
     Tree Height: 775
   - Class: rviz/Selection
@@ -102,6 +100,14 @@ Visualization Manager:
       Radius: 0.05
       Reference Frame: robot
       Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /odom_visualization2/mesh
+      Name: Marker
+      Namespaces:
+        odom_visualization: true
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -126,22 +132,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 68.5892
+      Distance: 5.31998
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.62329
-        Y: -0.419086
-        Z: 0.686868
+        X: 1.66521
+        Y: -0.798835
+        Z: 2.5096
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.894813
+      Pitch: 1.00481
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.17916
+      Yaw: 3.03916
     Saved: ~
 Window Geometry:
   Displays:
