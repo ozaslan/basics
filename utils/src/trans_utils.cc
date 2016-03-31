@@ -2,21 +2,21 @@
 
 namespace utils{
 	namespace trans{
-  
-    geometry_msgs::Quaternion quat2quat(const Eigen::Vector4d &quat){
-      geometry_msgs::Quaternion orient;
-      orient.w = quat(0);
-      orient.x = quat(1);
-      orient.y = quat(2);
-      orient.z = quat(3);
-      return orient;
-    }
+
+		geometry_msgs::Quaternion quat2quat(const Eigen::Vector4d &quat){
+			geometry_msgs::Quaternion orient;
+			orient.w = quat(0);
+			orient.x = quat(1);
+			orient.y = quat(2);
+			orient.z = quat(3);
+			return orient;
+		}
 
 		Eigen::Vector4d quat2quat(const geometry_msgs::Quaternion &quat){
-      return Eigen::Vector4d(quat.w, quat.x, quat.y, quat.z);
-    }
+			return Eigen::Vector4d(quat.w, quat.x, quat.y, quat.z);
+		}
 
-    nav_msgs::Odometry se32odom(const Eigen::Matrix4d &se3, bool cncl_yaw, const Eigen::Matrix6d &cov){
+		nav_msgs::Odometry se32odom(const Eigen::Matrix4d &se3, bool cncl_yaw, const Eigen::Matrix6d &cov){
 			nav_msgs::Odometry odom;
 			odom.pose.pose.position.x = se3(0, 3);
 			odom.pose.pose.position.y = se3(1, 3);
@@ -27,9 +27,9 @@ namespace utils{
 			odom.pose.pose.orientation.y = quat(2);
 			odom.pose.pose.orientation.z = quat(3);
 
-      for(int r = 0 ; r < 6 ; r++)
-        for(int c = 0 ; c < 6 ; c++)
-          odom.pose.covariance[r * 6 + c] = cov(r, c);
+			for(int r = 0 ; r < 6 ; r++)
+				for(int c = 0 ; c < 6 ; c++)
+					odom.pose.covariance[r * 6 + c] = cov(r, c);
 
 			return odom;
 		}
@@ -218,6 +218,60 @@ namespace utils{
 			double the = atan2(-dcm(2, 0) / cosphi, dcm(2, 2) / cosphi);
 			double psi = atan2(-dcm(0, 1) / cosphi, dcm(1, 1) / cosphi);
 			return Vector3d(phi, the, psi);
+		}
+
+		Eigen::Vector3d dcm2aaxis(const Eigen::Matrix3d &dcm){
+			return quat2aaxis(dcm2quat(dcm));
+		}
+
+		Eigen::Matrix3d aaxis2dcm(const Eigen::Vector3d &aaxis){
+			double angle = aaxis.norm();
+			Vector3d axis = aaxis / angle;
+			double c = cos(angle);
+			double s = sin(angle);
+			double t = 1.0 - c;
+
+			Eigen::Matrix3d dcm;
+
+			dcm(0, 0) = c + axis(0) * axis(0) * t;
+			dcm(1, 1) = c + axis(1) * axis(1) * t;
+			dcm(2, 2) = c + axis(2) * axis(2) * t;
+
+			double tmp1 = axis(0) * axis(1) * t;
+			double tmp2 = axis(2) * s;
+			dcm(1, 0) = tmp1 + tmp2;
+			dcm(0, 1) = tmp1 - tmp2;
+			tmp1 = axis(0)* axis(2) *t;
+			tmp2 = axis(1)* s;
+			dcm(2, 0) = tmp1 - tmp2;
+			dcm(0, 2) = tmp1 + tmp2;    
+			tmp1 = axis(1) * axis(2) * t;
+			tmp2 = axis(0) * s;
+			dcm(2, 1) = tmp1 + tmp2;
+			dcm(1, 2) = tmp1 - tmp2;
+			return dcm;
+		}
+
+		Eigen::Vector3d quat2aaxis(const Eigen::Vector4d &quat){
+			Eigen::Vector3d aaxis;
+			Eigen::Vector4d q = quat / quat.norm();
+			double angle = 2 * acos(q(0));
+			double s = sqrt(1 - q(0) * q(0)); 
+			if (s < 0.001) { 
+				aaxis = q.head<3>() * angle;
+			} else {
+				aaxis = q.head<3>() * angle / s;
+			}
+
+			return aaxis;
+		}
+
+		Eigen::Vector4d aaxis2quat(const Eigen::Vector3d &aaxis){
+			Eigen::Vector4d q;
+			double angle = aaxis.norm();
+			q(0) = cos(angle / 2);
+			q.tail(3) = aaxis / angle * sin(angle / 2);
+			return q;
 		}
 
 		Matrix3d cancel_yaw(const Matrix3d &dcm ){

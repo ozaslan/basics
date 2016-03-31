@@ -22,6 +22,9 @@ find_package(Eigen REQUIRED)
 include_directories(${Eigen_INCLUDE_DIRS}) 
 add_definitions(${EIGEN_DEFINITIONS})
 
+find_package(Armadillo REQUIRED)
+include_directories(${ARMADILLO_INCLUDE_DIRS})
+
 #uncomment if you have defined messages
 #rosbuild_genmsg()
 #uncomment if you have defined services
@@ -34,3 +37,5 @@ rosbuild_add_library(${PROJECT_NAME} src/utils.cc src/trans_utils.cc src/laser_u
 #rosbuild_link_boost(${PROJECT_NAME} thread)
 #rosbuild_add_executable(example examples/example.cpp)
 #target_link_libraries(utilities ${PROJECT_NAME})
+target_link_libraries(${PROJECT_NAME} ${ARMADILLO_LIBRARIES})
+

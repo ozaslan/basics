@@ -38,6 +38,10 @@ namespace utils{
 		Eigen::Vector4d rpy2quat(const Eigen::Vector3d &rpy);
 		Eigen::Vector4d dcm2quat(const Eigen::Matrix3d &dcm);
 		Eigen::Vector3d dcm2rpy (const Eigen::Matrix3d &dcm);
+		Eigen::Vector3d dcm2aaxis(const Eigen::Matrix3d &dcm);
+    Eigen::Matrix3d aaxis2dcm(const Eigen::Vector3d &aaxis);
+    Eigen::Vector3d quat2aaxis(const Eigen::Vector4d &quat);
+		Eigen::Vector4d aaxis2quat(const Eigen::Vector3d &aaxis);
 
 		// The following functions cancel the yaw component
 		// from the given rotation.
