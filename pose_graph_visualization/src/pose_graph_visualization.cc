@@ -138,13 +138,13 @@ void publish_pose_array(){
 
   initialized = true;
 
-  int num_edges = pose_graph_msg.edges.size() / 2;
-  pose_array_msg.points.resize(6 * num_edges);
-  pose_array_msg.colors.resize(6 * num_edges);
+  int num_poses = pose_graph_msg.poses.size();
+  pose_array_msg.points.resize(6 * num_poses);
+  pose_array_msg.colors.resize(6 * num_poses);
 
   Eigen::Matrix3d dcm;
 
-  for(int i = 0 ; i < num_edges ; i++){
+  for(int i = 0 ; i < num_poses ; i++){
     geometry_msgs::Pose pose = pose_graph_msg.poses[i];
     dcm = axis_length * utils::trans::pose2se3(pose).topLeftCorner<3, 3>();
  
