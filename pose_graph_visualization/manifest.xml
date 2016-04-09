@@ -1,0 +1,20 @@
+<package>
+  <description brief="pose_graph_visualization">
+
+     odom_visualization
+
+  </description>
+  <author>Salih Tolga Ozaslan</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/pose_graph_visualization</url>
+  <depend package="tf"/>
+  <depend package="roscpp"/>
+  <depend package="nav_msgs"/>
+  <depend package="sensor_msgs"/>
+  <depend package="visualization_msgs"/>
+  <depend package="utils"/>
+  <rosdep name="eigen" />
+</package>
+
+
