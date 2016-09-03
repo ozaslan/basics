@@ -1,0 +1,58 @@
+<!-- 
+Example launch file: launches the scan matcher with pre-recorded data
+-->
+
+<launch>
+
+#### Playback ROSBAG  ##############################
+
+<!-- args  ="-loop -rate=1.0 $(env ROS_DATASET_PATH)/inspot/towne01.bag"> -->
+<node	pkg   ="rosbag"
+		name  ="rosbag"
+		type  ="play"
+		output="screen"
+    args  ="--loop --rate=1.0 /home/ozaslan/inspot_2016-07-13-15-49-03.bag">
+</node>
+
+#### start the Tunnel Localizer ##############################
+
+<node	pkg  = "uniform_feat_extractor" 
+		name   = "uniform_feat_extractor" 
+		type   = "uniform_feat_extractor_app" 
+		output = "screen">
+		
+		<param name="debug_mode"	value="false"/>
+    <param name="refresh_rate"	value="40.0"/>	
+    <param name="image_mask_path"	value="$(find calib_data)/camera/inspot_bottom_left_cam_mask.png"/>	
+</node> 
+
+<node	pkg  = "image_transport" 
+		name   = "image_transport" 
+		type   = "republish" 
+    output = "screen"
+    args   = "compressed in:=/quadruple/bottom_left/image_raw/ raw out:=/cam3/image" >
+</node> 
+
+<node	pkg="image_view"
+		name="image_view"
+		type="image_view"
+		output="screen" 
+		args="image:=/uniform_feats">
+</node>
+
+</launch>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
