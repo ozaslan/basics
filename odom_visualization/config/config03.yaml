@@ -17,7 +17,7 @@ vel_color_r  : 0.90
 vel_color_g  : 0.90   
 vel_color_b  : 0.70   
 vel_color_a  : 0.7
-max_path_len : 999.0
+max_path_len : 99999.0
 mesh_scale : 1
 cov_scale : 250.0
 

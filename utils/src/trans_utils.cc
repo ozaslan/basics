@@ -258,9 +258,9 @@ namespace utils{
 			double angle = 2 * acos(q(0));
 			double s = sqrt(1 - q(0) * q(0)); 
 			if (s < 0.001) { 
-				aaxis = q.head<3>() * angle;
+				aaxis = q.tail<3>() * angle;
 			} else {
-				aaxis = q.head<3>() * angle / s;
+				aaxis = q.tail<3>() * angle / s;
 			}
 
 			return aaxis;

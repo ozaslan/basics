@@ -2,7 +2,7 @@
 
 namespace utils{
   namespace laser{
-
+/*
     bool get_fim(const sensor_msgs::LaserScan &data, const vector<char> &mask, Eigen::Matrix3d &fim, const char &cluster_id){
       // Either the 'mask' has to be empty which corresponds to all points being valid.
       // Otherwise this function expects the 'data.ranges' and 'mask' to have the same
@@ -133,7 +133,7 @@ namespace utils{
          cout << (int)mask[i]; 
          cout << endl;
        */
-
+/*
       for(int i = 0 ; i < num_ranges ; i++){
         // Check if there is occlusion (angle spans required to
         // be omitted)
@@ -195,7 +195,7 @@ namespace utils{
          cout << (int)mask[i];
          cout << endl;
        */
-      return true;
+ /*     return true;
     }
 
 
@@ -340,7 +340,7 @@ namespace utils{
         ld_alloc(&ld1, mask1.size());
       ld_alloc(&ld2, mask2.size());
       */
-  
+  /*
       ld1.nrays = num_valid_ranges1;
       ld1.min_theta = min_angle1;
       ld1.max_theta = max_angle1;
@@ -364,7 +364,7 @@ namespace utils{
 
       //cout << "ld1_min_theta = " << ld1.min_theta << endl;
       //cout << "ld1.theta[0]  = " << ld1.theta[0]  << endl;
-
+/*
       ld2.nrays = num_valid_ranges2;
       ld2.min_theta = min_angle2;
       ld2.max_theta = max_angle2;
@@ -402,7 +402,7 @@ namespace utils{
           ld2.readings[i] = numeric_limits<double>::quiet_NaN();
       }
       */
-
+/*
       ld1.odometry[0] = 0;
       ld1.odometry[1] = 0;
       ld1.odometry[2] = 0;
@@ -443,7 +443,7 @@ namespace utils{
          cout << endl;
 
        */
-      sm_icp(&params, &result);
+/*      sm_icp(&params, &result);
 
       ld_dealloc(&ld1);
       ld_dealloc(&ld2);
@@ -462,7 +462,7 @@ namespace utils{
 
       //cout << result.valid << ", " << result.iterations << ", [" << result.x[0] << ", " << result.x[1] << ", " << result.x[2] << "]" << endl;
       //cout << result.nvalid << ", " << result.error << endl;       
-    }
+    }*/
   }
 }
 

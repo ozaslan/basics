@@ -1,39 +1,62 @@
-cmake_minimum_required(VERSION 2.4.6)
-include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
+cmake_minimum_required(VERSION 2.8.12)
 
-# Set the build type.  Options are:
-#  Coverage       : w/ debug symbols, w/o optimization, w/ code-coverage
-#  Debug          : w/ debug symbols, w/o optimization
-#  Release        : w/o debug symbols, w/ optimization
-#  RelWithDebInfo : w/ debug symbols, w/ optimization
-#  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
-#set(ROS_BUILD_TYPE RelWithDebInfo)
+project(odom_visualization)
 
-rosbuild_init()
+# Get the information about this package's buildtime dependencies
+
+find_package(cmake_modules REQUIRED)
+
+find_package(Eigen REQUIRED) 
+
+find_package(catkin REQUIRED COMPONENTS 
+              roscpp 
+              tf  
+              sensor_msgs
+	      visualization_msgs
+              nav_msgs
+	      utils
+	      std_msgs
+              cmake_modules)
+
+
+# Declare the message files to be built
+#  add_message_files(FILES
+#      MyMessage1.msg
+#      MyMessage2.msg
+#      )
+
+
+
+
+
+# Actually generate the language-specific message and service files
+# generate_messages(DEPENDENCIES std_msgs sensor_msgs)
+
+# Declare that this catkin package's runtime dependencies
+catkin_package(CATKIN_DEPENDS 
+              roscpp 
+              tf  
+              sensor_msgs
+	      visualization_msgs
+              nav_msgs
+	      utils)
+
+catkin_package(
+   INCLUDE_DIRS 
+   LIBRARIES 
+   CATKIN_DEPENDS utils
+   DEPENDS Eigen)
+
+include_directories(include
+                    ${catkin_INCLUDE_DIRS}
+                    ${INCLUDE_DIRS})
+
 
 #set the default path for built executables to the "bin" directory
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 #set the default path for built libraries to the "lib" directory
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
-find_package(cmake_modules REQUIRED)
- 
-find_package(Eigen REQUIRED)
-include_directories(${Eigen_INCLUDE_DIRS})
-add_definitions(${EIGEN_DEFINITIONS})
+add_executable(${PROJECT_NAME}_node src/odom_visualization.cc)
+target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES} utils)
 
-
-#uncomment if you have defined messages
-#rosbuild_genmsg()
-#uncomment if you have defined services
-#rosbuild_gensrv()
-
-#common commands for building c++ executables and libraries
-#rosbuild_add_library(${PROJECT_NAME} src/example.cpp)
-#target_link_libraries(${PROJECT_NAME} another_library)
-#rosbuild_add_boost_directories()
-#rosbuild_link_boost(${PROJECT_NAME} thread)
-#rosbuild_add_executable(example examples/example.cpp)
-#target_link_libraries(example ${PROJECT_NAME})
-
-rosbuild_add_executable(${PROJECT_NAME}_node src/odom_visualization.cc)

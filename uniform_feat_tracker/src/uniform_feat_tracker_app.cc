@@ -10,8 +10,8 @@ ros::Subscriber image_subs;
 ros::Publisher  image_publ;
 
 cv_bridge::CvImagePtr image_msg;
-UniformFeatureExtractor unif_feat_extractor("fast", 3, 150, Size2i(4, 3), 9, true);
-UniformFeatureTracker unif_feat_tracker(150, 13);
+UniformFeatureExtractor unif_feat_extractor("fast", 3, 150, Size2i(5, 4), 7, true);
+UniformFeatureTracker unif_feat_tracker(250, 13);
 
 int  setup_messaging_interface(ros::NodeHandle &n);
 void image_callback(const sensor_msgs::Image &msg);
@@ -73,11 +73,13 @@ void image_callback(const sensor_msgs::Image &msg)
   
   if(image_msg->image.channels() == 3)
     cv::cvtColor(image_msg->image, img, CV_BGR2GRAY);
+  else if(image_msg->image.channels() == 4)
+    cv::cvtColor(image_msg->image, img, CV_BGRA2GRAY);
   else
     img = image_msg->image;
 
-	cv::Mat mask = cv::imread("/home/ozaslan/Research/ros_ws/calibration/calib_data/camera/ins_khex_right_cam_mask.png");
-	if(mask.channels() != 0)
+	cv::Mat mask; //cv::imread("/home/ozaslan/Research/ros_ws/calibration/calib_data/camera/ins_khex_right_cam_mask.png");
+	if(mask.channels() != 0 && mask.size() != cv::Size(0, 0))
 		cv::cvtColor(mask, mask, CV_BGR2GRAY);
 
 	//cout << mask << endl;

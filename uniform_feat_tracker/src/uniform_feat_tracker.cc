@@ -30,10 +30,10 @@ UniformFeatureTracker::UniformFeatureTracker(int max_num_feats, int max_hist_len
 	_feat_thickness = -1;
 	_aging_time = 3.3; // seconds
 	_num_tracked_feats = 0;
-	_max_flow_rate = 120;
+	_max_flow_rate = 220;
 	_num_stddevs = 3;
 	_max_age = 300000; // Why?
-  _curr_frame_idx = 0;
+	_curr_frame_idx = 0;
 	_initialize();
 }
 

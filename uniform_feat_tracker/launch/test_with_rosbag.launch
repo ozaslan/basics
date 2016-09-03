@@ -6,11 +6,12 @@ Example launch file: launches the scan matcher with pre-recorded data
 
 #### Playback ROSBAG  ##############################
 
+<!-- args  ="-loop -rate=1.0 $(env ROS_DATASET_PATH)/inspot/towne01.bag"> -->
 <node	pkg   ="rosbag"
 		name  ="rosbag"
 		type  ="play"
 		output="screen"
-		args  ="--loop --rate=1.0 $(env ROS_DATASET_PATH)/13Jan_khex/1.bag">
+    args  ="--loop --rate=1.0 /media/ozaslan/research_backup/inspot/inspot_2016-07-09-22-21-53.bag">
 </node>
 
 #### start the Tunnel Localizer ##############################
@@ -20,8 +21,15 @@ Example launch file: launches the scan matcher with pre-recorded data
 		type   = "uniform_feat_tracker_app" 
 		output = "screen">
 		
-		<param name="debug_mode"	value="FALSE"/>
-		<param name="refresh_rate"	value="40.0"/>	
+		<param name="debug_mode"	value="TRUE"/>
+    <param name="refresh_rate"	value="40.0"/>	
+</node> 
+
+<node	pkg  = "image_transport" 
+		name   = "image_transport" 
+		type   = "republish" 
+    output = "screen"
+    args   = "compressed in:=/quadruple/top_right/image_raw/ raw out:=/cam3/image" >
 </node> 
 
 <node	pkg="image_view"

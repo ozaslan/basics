@@ -71,7 +71,7 @@ private:
 public:
 	// This constructor gets the maximum number of features to be tracked
 	// and the length of the history.
-	UniformFeatureTracker( int max_num_feats = 600, int max_hist_len = 13 );
+	UniformFeatureTracker( int max_num_feats = 600, int max_hist_len = 2 );
 	// This function tracks previously extracted features into the given 
 	// new frame. It also adds new features as long as there is still room 
 	// to reach to '_max_num_feats'
