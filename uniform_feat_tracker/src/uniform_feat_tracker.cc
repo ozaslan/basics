@@ -23,7 +23,7 @@ UniformFeatureTracker::UniformFeatureTracker(int max_num_feats, int max_hist_len
 	_max_num_feats = max_num_feats;
 	_max_hist_len  = max_hist_len;
 	_flow_thickness = 1.5;
-	_use_aged_colors = true;
+	_use_aged_colors = false;
 	_flow_color = Scalar(0, 0, 255);
 	_feat_color = Scalar(0, 0, 255);
 	_feat_radius = 2;
@@ -31,7 +31,7 @@ UniformFeatureTracker::UniformFeatureTracker(int max_num_feats, int max_hist_len
 	_aging_time = 3.3; // seconds
 	_num_tracked_feats = 0;
 	_max_flow_rate = 220;
-	_num_stddevs = 3;
+	_num_stddevs = 2;
 	_max_age = 300000; // Why?
 	_curr_frame_idx = 0;
 	_initialize();

@@ -16,8 +16,8 @@ class UniformFeatureExtractor
 {
 private:
 	// Visualization related parameters
-	Scalar _feat_color;		// color of the feature
-	Scalar _grid_color;		// color of the grid borders
+  cv::Scalar _feat_color;		// color of the feature
+  cv::Scalar _grid_color;		// color of the grid borders
 	float  _radius;			// size of the circle corr. to features
 	float  _feat_thickness;	// thickness of the circle, negative draws filled circle
 	float  _grid_thickness;	// thickness of the grid guides.
@@ -29,32 +29,33 @@ private:
 
 	// The generic OpenCV FeatureDetector lets initalizing detectors
 	// of different times in run time. 
-	string _detector_type;			// any of FAST, GFTT or HARRIS.
-									// as the type of the detector. Example "GridFast"
-	FastFeatureDetector				// Two different detectors have to be defined
+	string _detector_type;	// any of FAST, GFTT or HARRIS.
+									        // as the type of the detector. Example "GridFast"
+	FastFeatureDetector			// Two different detectors have to be defined
 			_fast_detector;			// in order to handle possible user choices.
 	GoodFeaturesToTrackDetector 
 			_gftt_detector;
-	cv::Mat _mask;					// used to mask regions which are closer to at least one of
-									// the corners in the initial features list.
-	int    _max_num_feats;			// limit output of extract_features(...) 
-	double _threshold;				// feature detector threshold
-	float  _min_dist;				// the minimum distance to each feature in the intial 
-									// feature list in order a new feature to be added to the
-									// output feature list
-	cv::Mat _histogram;				// keeps the total number of features in each grid.
+	cv::Mat _mask;	        // used to mask regions which are closer to at least one of
+									        // the corners in the initial features list.
+	int    _max_num_feats;	// limit output of extract_features(...) 
+	double _threshold;			// feature detector threshold
+	float  _min_dist;				// the minimum mutual distance of each feature in the initial 
+									        // feature list in order a new feature to be added to the
+									        // output feature list
+	cv::Mat _histogram;			// keeps the total number of features in each grid.
 
 	bool _force_uniformity;			// can be set to 'false' for performance concerns.
 
+	vector<KeyPoint> _keypoints;  // container user in 'extract_features(...)'
 	// This function counts the total number features in each grid into '_histogram'.
-	// '_histogram' then is used in satisfying feature distribution uniformity.
+	// '_histogram' then is used in satisfying the feature distribution uniformity.
 	bool _profile_grids(const vector<Point2f> &features);
 public:
-	// - min_dist := No feats. are at a closes distance to eachother smaller than this
+	// - min_dist := No feats. are at a closer distance to eachother smaller than this
 	// This prevents unnecessary memory and CPU usage as well as contradicting information for higher 
 	// level processes
 	// - max_num_feats := Extractor tries to distribute this number optimally between image regions (patches)
-	// Assigning a high value reduces performance, whereas a small value affact the estimator performance eventually.
+	// Assigning a high value reduces performance, whereas a small value affect the estimator performance eventually.
 	// - grid_size := Number of patches (regions) to which 'max_num_feats' is distributed to. This defines
 	// a grid.
 	// - threshold := Feature extractor threshold. By default FAST is used while the alternative is 

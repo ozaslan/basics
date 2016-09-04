@@ -9,12 +9,14 @@
 ros::Subscriber image_subs;
 ros::Publisher  image_publ;
 
+string image_mask_path = "";
 cv_bridge::CvImagePtr image_msg;
-UniformFeatureExtractor unif_feat_extractor("fast", 3, 150, Size2i(5, 4), 7, true);
-UniformFeatureTracker unif_feat_tracker(250, 13);
+UniformFeatureExtractor unif_feat_extractor("fast", 3, 500, Size2i(6, 7), 5, true);
+UniformFeatureTracker unif_feat_tracker(500, 2);
 
 int  setup_messaging_interface(ros::NodeHandle &n);
 void image_callback(const sensor_msgs::Image &msg);
+void process_inputs(const ros::NodeHandle &n);
 int  publish_image();
 
 bool debug_mode = false;
@@ -24,12 +26,21 @@ int main(int argc, char** argv)
 	ros::init(argc, argv, "uniform_feat_tracker_app");
 	ros::NodeHandle n("~");
 	
+  process_inputs(n);
 	setup_messaging_interface(n);
 	
 	ros::spin();
 	
 	return 0;
 }
+
+void process_inputs(const ros::NodeHandle &n)
+{     
+  n.param("debug_mode", debug_mode, true);
+
+  n.param("image_mask_path", image_mask_path, string("no_mask_path"));
+}
+
 
 int setup_messaging_interface(ros::NodeHandle &n)
 {
@@ -69,22 +80,42 @@ void image_callback(const sensor_msgs::Image &msg)
 		return;
 	}
 
-  cv::Mat img;
-  
-  if(image_msg->image.channels() == 3)
-    cv::cvtColor(image_msg->image, img, CV_BGR2GRAY);
-  else if(image_msg->image.channels() == 4)
-    cv::cvtColor(image_msg->image, img, CV_BGRA2GRAY);
+  cv::Mat gray_img, color_img = image_msg->image * 1;
+  vector<cv::Mat> channels;
+
+  cv::split(color_img, channels); 
+  cv::equalizeHist(channels[0], channels[0]);
+  cv::equalizeHist(channels[1], channels[1]);
+  cv::equalizeHist(channels[2], channels[2]);
+  cv::merge(channels, color_img);
+
+  if(color_img.channels() == 3)
+    cv::cvtColor(color_img, gray_img, CV_BGR2GRAY);
+  else if(color_img.channels() == 4)
+    cv::cvtColor(color_img, gray_img, CV_BGRA2GRAY);
   else
-    img = image_msg->image;
+    gray_img = color_img;
 
-	cv::Mat mask; //cv::imread("/home/ozaslan/Research/ros_ws/calibration/calib_data/camera/ins_khex_right_cam_mask.png");
-	if(mask.channels() != 0 && mask.size() != cv::Size(0, 0))
-		cv::cvtColor(mask, mask, CV_BGR2GRAY);
+  cv::GaussianBlur(gray_img, gray_img, cv::Size(13, 13), 5, 5, BORDER_DEFAULT );
 
-	//cout << mask << endl;
+  cv::Mat mask2;
+  cv::threshold(gray_img, mask2, 150, 255, cv::THRESH_BINARY);
 
-	unif_feat_tracker.track_features(img, unif_feat_extractor, mask);
+  cv::adaptiveThreshold(gray_img, gray_img, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 35, 0);
+
+  cv::Mat mask = cv::imread(image_mask_path);
+  if(mask.channels() != 1)
+    cv::cvtColor(mask, mask, CV_BGR2GRAY);
+
+  mask = cv::min(mask, mask2);
+  cv::namedWindow("mask");
+  cv::imshow("mask", mask);
+  cv::namedWindow("gray_img");
+  cv::imshow("gray_img", gray_img);
+
+  cv::waitKey(1);
+
+	unif_feat_tracker.track_features(gray_img, unif_feat_extractor, mask);
 	unif_feat_tracker.plot_flow(image_msg->image, true, true);
 
 	publish_image();

@@ -39,7 +39,7 @@ int UniformFeatureExtractor::set_plotting_params(Scalar feat_color, Scalar grid_
 
 // ### shi tomasi parameters should be settable from function call. May be write setter, getter functions.
 UniformFeatureExtractor::UniformFeatureExtractor(string detector_type, double min_dist_between_feats,
-												int max_num_feats, Size2i grid_size, double threshold,
+												int max_num_feats, cv::Size2i grid_size, double threshold,
 												bool force_uniformity){
 	_min_dist = min_dist_between_feats;
 	_max_num_feats = max_num_feats;
@@ -57,7 +57,6 @@ int UniformFeatureExtractor::extract_features(const cv::Mat &img, vector<Point2f
   ASSERT(mask.size() == cv::Size(0, 0) || mask.size() == img.size(), "mask and image must have same sizes")
 
 	features.reserve(_max_num_feats);
-	static vector<KeyPoint> keypoints;
 
 	_patch_size.width  = (float)img.cols / _grid_size.width;
 	_patch_size.height = (float)img.rows / _grid_size.height;
@@ -83,41 +82,39 @@ int UniformFeatureExtractor::extract_features(const cv::Mat &img, vector<Point2f
 	// the tedious vicinity check to OpenCV.
 	bool is_fast = false;
 	if(_detector_type == "fast"){
-		_fast_detector.detect(img, keypoints, _mask);
+		_fast_detector.detect(img, _keypoints, _mask);
 		is_fast = true;
 	} else {
-		_gftt_detector.detect(img, keypoints, _mask);
+		_gftt_detector.detect(img, _keypoints, _mask);
 	}
-
 	debug_msg("B4")
 
 	// Extracted features are sorted in order to first add stronger 
-	// corners to the output list of features. 'keypoint_sort(...)'
+	// corners to the output list of features. '_keypoint_sort(...)'
 	// function (defined at the top of the file) is used as predicate.
-	std::sort(keypoints.begin(), keypoints.end(), keypoint_sort);
+	std::sort(_keypoints.begin(), _keypoints.end(), keypoint_sort);
 
 	debug_msg("B5")
 	// Add the strongest 13 of the keypoints unconditionally. 
 	// (*) Then starting from the patch which has the least features, 
 	// add new keypoints to the output list.
-  int offset = 1;
+  int offset = 0;
 	for(int i = 0 ; i < offset && (int)features.size() < _max_num_feats ; i++){
-	  if(_mask.at<char>(keypoints[i].pt.y, keypoints[i].pt.x) == 0)
+	  if(_mask.at<char>(_keypoints[i].pt.y, _keypoints[i].pt.x) == 0)
 	      continue;
-		features.push_back(keypoints[i].pt);
+		features.push_back(_keypoints[i].pt);
 		if(is_fast)
-			circle(_mask, keypoints[i].pt, _min_dist, 0, -1);
+			circle(_mask, _keypoints[i].pt, _min_dist, 0, -1);
 	}
-
 	
 	debug_msg("B6")
 
 	if(_force_uniformity == false){
-		for(int i = offset ; i < (int)keypoints.size() && (int)features.size() < _max_num_feats ; i++){
+		for(int i = offset ; i < (int)_keypoints.size() && (int)features.size() < _max_num_feats ; i++){
 			if(is_fast == false) {
-				features.push_back(keypoints[i].pt);
+				features.push_back(_keypoints[i].pt);
 			} else {
-				Point2f pt = keypoints[i].pt;
+				Point2f pt = _keypoints[i].pt;
 				if(_mask.at<char>(pt.y, pt.x) == 0)
 					continue;
 				else {
@@ -126,7 +123,6 @@ int UniformFeatureExtractor::extract_features(const cv::Mat &img, vector<Point2f
 				}
 			}
 		}
-
 		return features.size();
 	}
 
@@ -142,8 +138,8 @@ int UniformFeatureExtractor::extract_features(const cv::Mat &img, vector<Point2f
 
 	// Buffers to hold row and column indices of keypoints
 	static vector<int> rs, cs;
-	rs.resize(keypoints.size());
-	cs.resize(keypoints.size());
+	rs.resize(_keypoints.size());
+	cs.resize(_keypoints.size());
 	// rs[...] is used as an array of flags to define : 'unprocessed = -2' and
 	// 'invalid = -1' keypoints. Keypoints whose grid indices are not determined
 	// are called 'unprocessed'. Those processed but either used or failed mask
@@ -168,11 +164,11 @@ int UniformFeatureExtractor::extract_features(const cv::Mat &img, vector<Point2f
 		debug_msg("B8.2")
 		// Search for the aforementioned keypoint.
 		bool has_more_keypts = false;
-		for(int i = 13 ; i < (int)keypoints.size() ; i++){
+		for(int i = 0 ; i < (int)_keypoints.size() ; i++){
 			//debug_msg("B8.2.1")
 			if(rs[i] == -1)
 				continue;
-			Point2f pt = keypoints[i].pt;
+			Point2f pt = _keypoints[i].pt;
 			// Check if row and col index of this keypoint has been calculated
 			if(rs[i] == -2){
 				if(is_fast == true &&  _mask.at<char>(pt.y, pt.x) == 0){
