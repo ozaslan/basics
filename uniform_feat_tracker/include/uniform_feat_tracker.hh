@@ -65,6 +65,9 @@ private:
 	int _max_age;								// maximum life in frames after which the feature is 
 												//    removed from the OF trailer
 	
+  int _method; // 0 : Pyramidal Lucas-Kanade
+               // 1 : Template matching
+
 
 	int _initialize();							// initializes paramters, allocates memory etc.
 	int _eliminate_outliers(const cv::Mat &mask);// 

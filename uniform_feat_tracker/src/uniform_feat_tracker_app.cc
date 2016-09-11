@@ -12,7 +12,7 @@ ros::Publisher  image_publ;
 string image_mask_path = "";
 cv_bridge::CvImagePtr image_msg;
 UniformFeatureExtractor unif_feat_extractor("fast", 3, 500, Size2i(6, 7), 5, true);
-UniformFeatureTracker unif_feat_tracker(500, 2);
+UniformFeatureTracker unif_feat_tracker(500, 3);
 
 int  setup_messaging_interface(ros::NodeHandle &n);
 void image_callback(const sensor_msgs::Image &msg);
@@ -89,6 +89,7 @@ void image_callback(const sensor_msgs::Image &msg)
   cv::equalizeHist(channels[2], channels[2]);
   cv::merge(channels, color_img);
 
+
   if(color_img.channels() == 3)
     cv::cvtColor(color_img, gray_img, CV_BGR2GRAY);
   else if(color_img.channels() == 4)
@@ -101,7 +102,7 @@ void image_callback(const sensor_msgs::Image &msg)
   cv::Mat mask2;
   cv::threshold(gray_img, mask2, 150, 255, cv::THRESH_BINARY);
 
-  cv::adaptiveThreshold(gray_img, gray_img, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 35, 0);
+  cv::adaptiveThreshold(gray_img, gray_img, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 55, -2.5);
 
   cv::Mat mask = cv::imread(image_mask_path);
   if(mask.channels() != 1)

@@ -3,6 +3,7 @@
 using namespace arma;
 
 namespace utils{
+
 	void get_ellipse_parameters(vector<double> &fit, Ellipse &ell)
 	{
 		double a, b, c, d, e, f;

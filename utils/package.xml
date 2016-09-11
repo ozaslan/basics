@@ -1,0 +1,37 @@
+
+<package>
+  <version>1.0.0</version>
+  <name>utils</name>
+  <description>
+     utils
+  </description>
+  <author>Tolga Ozaslan</author>
+  <license>BSD</license>
+  <maintainer email="ozaslan@seas.upenn.edu">Tolga Ozaslan</maintainer>
+
+  <build_depend>roscpp</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>nav_msgs</build_depend>
+  <build_depend>armadillo</build_depend>
+  <build_depend>cv_bridge</build_depend>
+
+  <build_depend>visualization_msgs</build_depend>
+
+
+ <run_depend>roscpp</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>nav_msgs</run_depend>
+  <run_depend>armadillo</run_depend>
+  <run_depend>cv_bridge</run_depend>
+  
+ <run_depend>visualization_msgs</run_depend>
+  
+  <build_depend>cmake_modules</build_depend>
+<buildtool_depend>catkin</buildtool_depend>
+
+</package>
+
+
+

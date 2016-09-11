@@ -11,7 +11,7 @@ Example launch file: launches the scan matcher with pre-recorded data
 		name  ="rosbag"
 		type  ="play"
 		output="screen"
-    args  ="--loop --start=60 --rate=0.5 /home/ozaslan/inspot_2016-07-13-15-49-03.bag">
+    args  ="--loop --start=15 --rate=0.5 /home/ozaslan/storage/inspot_2016-07-12-17-11-26.bag">
 </node>
 
 #### start the Tunnel Localizer ##############################
@@ -22,14 +22,14 @@ Example launch file: launches the scan matcher with pre-recorded data
 		output = "screen">
 		
 		<param name="debug_mode"	value="false"/>
-    <param name="image_mask_path"	value="$(find calib_data)/camera/inspot_bottom_right_cam_mask.png"/>	
+    <param name="image_mask_path"	value="$(find calib_data)/camera/inspot_top_left_cam_mask.png"/>	
 </node> 
 
 <node	pkg  = "image_transport" 
 		name   = "image_transport" 
 		type   = "republish" 
     output = "screen"
-    args   = "compressed in:=/quadruple/bottom_right/image_raw/ raw out:=/cam3/image" >
+    args   = "compressed in:=/quadruple/top_left/image_raw/ raw out:=/cam3/image" >
 </node> 
 
 <node	pkg="image_view"

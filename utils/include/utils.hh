@@ -31,6 +31,7 @@
 
 #include "trans_utils.hh"
 #include "laser_utils.hh"
+#include "color_utils.hh"
 
 #include <armadillo>
 
@@ -65,12 +66,25 @@ namespace utils{
 
 #define PRINT_FLF {cout << "File : " << __FILE__ << " Line # : " << __LINE__ << " Func : " << __func__ << endl;}
 
+#define SGN(x) ((x) == 0 ? 0 : ((x) < 0 ? -1 : +1))
+
+#define DEBUG_MSGS_ON 0
+#define DEBUG_MSG(text) {if(DEBUG_MSGS_ON){cout << "DEBUG_MSG : " << text << endl; fflush(NULL);}}
+
 #ifndef DEG2RAD
 #define DEG2RAD(x) ((x) / 180.0 * PI)
 #endif
 #ifndef RAD2DEG
 #define RAD2DEG(x) ((x) / PI * 180.0)
 #endif
+
+extern std::map<string, ros::Time> __timers__;
+#define TIC(text) {utils::__timers__[(text)] = ros::Time::now();}
+#define TOC(text) {auto it = utils::__timers__.find(text); \
+                   if(it != utils::__timers__.end()) \
+                    cout << "Timer <" << it->first << "> : " << (ros::Time::now() - it->second).toSec() << endl; \
+                   else \
+                    cout << "No timer <" << (text) << ">" << endl;}
 
   // The 'utils' namespace implements utility functions which cannot
   // be categorized into a specific class of helper routines. However
