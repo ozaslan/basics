@@ -1,0 +1,31 @@
+<package>
+  <version>0.3.0</version>
+  <name>uniform_feat_extractor</name>
+  <description>
+     uniform_feat_extractor : Extracts features which are uniformly
+     distributed over the image plane. This will prevent dense local clusters 
+     of features and hence hopefully improve pose/velocity estimation
+     results. This node implements a class and a sample application.
+  </description>
+  <author>Tolga Ozaslan</author>
+  <license>BSD</license>
+  <maintainer email="ozaslan@seas.upenn.edu">Tolga Ozaslan</maintainer>
+  
+  <build_depend>roscpp</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>cv_bridge</build_depend>
+  <build_depend>utils</build_depend>
+
+  <run_depend>roscpp</run_depend>
+  <run_depend>utils</run_depend>
+  <run_depend>cv_bridge</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>utils</run_depend>
+  <buildtool_depend>catkin</buildtool_depend>
+  
+  <export>
+	  <cpp cflags="-I${prefix}/include" lflags="-L${prefix}/lib -luniform_feat_extractor"/> 
+  </export>
+
+</package>
+

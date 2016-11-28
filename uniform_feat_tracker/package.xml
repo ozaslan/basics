@@ -1,0 +1,37 @@
+<package>
+  <version>0.3.0</version>
+  <name>uniform_feat_tracker</name>
+  <description>
+	uniform_feat_tracker : This module uses uniform_feat_extractor
+	and trackes its outputs while making outlier elimination
+	using the constraints exposed by flow continuity and trend
+	in the totality of the flow field. History of the flow field
+	is stored to be used in bundle adjustment and visualization.
+	New features add uniformly over the image as others are eliminated.
+	This node implements a class and a sample application.
+  </description>
+  <author>Salih Tolga Ozaslan</author>
+  <maintainer email="ozaslan@seas.upenn.edu">Tolga Ozaslan</maintainer>
+  <license>BSD</license>
+  <url>http://ros.org/wiki/uniform_feat_tracker</url>
+
+  <build_depend>roscpp</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>cv_bridge</build_depend>
+  <build_depend>utils</build_depend>
+  <build_depend>uniform_feat_extractor</build_depend>
+
+  <run_depend>utils</run_depend>
+  <run_depend>cv_bridge</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>utils</run_depend>
+  <run_depend>uniform_feat_extractor</run_depend>
+  <buildtool_depend>catkin</buildtool_depend>
+  
+  <export>
+	  <cpp cflags="-I${prefix}/include" lflags="-L${prefix}/lib -luniform_feat_tracker"/> 
+  </export>
+  
+</package>
+
+

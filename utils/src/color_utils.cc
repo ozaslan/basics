@@ -34,12 +34,18 @@ namespace utils{
         _colors.push_back(Eigen::Vector3d(0.56, 0.00, 1.00));
         _colors.push_back(Eigen::Vector3d(0.50, 0.09, 0.09));
         _colors.push_back(Eigen::Vector3d(0.31, 0.47, 0.26));
+        _colors.push_back(Eigen::Vector3d(254, 163, 170) / 255);
+        _colors.push_back(Eigen::Vector3d(248, 184, 139) / 255);
+        _colors.push_back(Eigen::Vector3d(250, 248, 132) / 255);
+        _colors.push_back(Eigen::Vector3d(186, 237, 145) / 255);
+        _colors.push_back(Eigen::Vector3d(178, 206, 254) / 255);
+        _colors.push_back(Eigen::Vector3d(242, 162, 232) / 255);
       }
       return _colors.size();
     }
 
     Eigen::Vector3d Colors::operator[](int i){ 
-      return _colors[i];
+      return _colors[i & _colors.size()];
     }
 
     int Colors::size(){ 

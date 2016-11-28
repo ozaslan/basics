@@ -11,7 +11,7 @@ ros::Publisher  image_publ;
 
 string image_mask_path = "";
 cv_bridge::CvImagePtr image_msg;
-UniformFeatureExtractor unif_feat_extractor("fast", 3, 500, Size2i(6, 7), 5, true);
+UniformFeatureExtractor unif_feat_extractor("fast", 2, 500, Size2i(6, 7), 5, true);
 UniformFeatureTracker unif_feat_tracker(500, 3);
 
 int  setup_messaging_interface(ros::NodeHandle &n);
