@@ -17,7 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
 #      MyMessage2.msg
 #      )
 
-find_package(OpenCV 2 REQUIRED)
+find_package(OpenCV 3 REQUIRED)
 
 # Actually generate the language-specific message and service files
 # generate_messages(DEPENDENCIES std_msgs sensor_msgs)
