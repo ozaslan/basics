@@ -2,6 +2,9 @@
 #define _UNIF_FEAT_EXTRACTOR_H_
 
 #include <opencv2/opencv.hpp>
+#include <opencv2/ximgproc.hpp>
+#include <opencv2/xfeatures2d.hpp>
+#include <opencv2/imgproc.hpp>
 #include <utils.hh>
 
 #include <iostream>
@@ -31,9 +34,9 @@ private:
 	// of different times in run time. 
 	string _detector_type;	// any of FAST, GFTT or HARRIS.
 									        // as the type of the detector. Example "GridFast"
-	FastFeatureDetector			// Two different detectors have to be defined
+  cv::Ptr<FastFeatureDetector>			// Two different detectors have to be defined
 			_fast_detector;			// in order to handle possible user choices.
-	GoodFeaturesToTrackDetector 
+  cv::Ptr<GFTTDetector>
 			_gftt_detector;
 	cv::Mat _mask;	        // used to mask regions which are closer to at least one of
 									        // the corners in the initial features list.

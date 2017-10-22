@@ -19,7 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
 # Actually generate the language-specific message and service files
 # generate_messages(DEPENDENCIES std_msgs sensor_msgs)
 
-find_package(OpenCV 2 REQUIRED)
+find_package(OpenCV 3 REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 # Declare that this catkin package's runtime dependencies

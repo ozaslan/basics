@@ -82,10 +82,10 @@ int UniformFeatureExtractor::extract_features(const cv::Mat &img, vector<Point2f
 	// the tedious vicinity check to OpenCV.
 	bool is_fast = false;
 	if(_detector_type == "fast"){
-		_fast_detector.detect(img, _keypoints, _mask);
+		_fast_detector->detect(img, _keypoints, _mask);
 		is_fast = true;
 	} else {
-		_gftt_detector.detect(img, _keypoints, _mask);
+		_gftt_detector->detect(img, _keypoints, _mask);
 	}
 	debug_msg("B4")
 
@@ -225,11 +225,14 @@ void UniformFeatureExtractor::set_detector(string detector_type){
 	std::transform(detector_type.begin(), detector_type.end(), detector_type.begin(), ::tolower);
 
 	if(detector_type == "fast")
-		_fast_detector = FastFeatureDetector(_threshold);
+    _fast_detector = cv::FastFeatureDetector::create(_threshold);
+		//_fast_detector = FastFeatureDetector(_threshold);
 	else if(detector_type == "harris")
-		_gftt_detector = GoodFeaturesToTrackDetector(_max_num_feats, _threshold, _min_dist, 3, true);
+		//_gftt_detector = GoodFeaturesToTrackDetector(_max_num_feats, _threshold, _min_dist, 3, true);
+		_gftt_detector = cv::GFTTDetector::create(_max_num_feats, _threshold, _min_dist, 3, true);
 	else if(detector_type == "gftt")
-		_gftt_detector = GoodFeaturesToTrackDetector(_max_num_feats, _threshold, _min_dist);
+		//_gftt_detector = GoodFeaturesToTrackDetector(_max_num_feats, _threshold, _min_dist);
+		_gftt_detector = cv::GFTTDetector::create(_max_num_feats, _threshold, _min_dist, 3, false);
 	else {
 		cv::Exception ex;
 		ex.code = 0;
