@@ -5,6 +5,7 @@ project(utils)
 # Get the information about this package's buildtime dependencies
 find_package(cmake_modules REQUIRED)
 
+find_package(OpenCV 3 REQUIRED)
 find_package(Armadillo REQUIRED)
 include_directories(${ARMADILLO_INCLUDE_DIRS})
 
@@ -13,13 +14,13 @@ find_package(Eigen REQUIRED)
 
 
 find_package(catkin REQUIRED COMPONENTS 
-              roscpp 
-	      geometry_msgs  
-              sensor_msgs
-	      visualization_msgs
-              nav_msgs
-	      cv_bridge
-              cmake_modules)
+  roscpp 
+  geometry_msgs  
+  sensor_msgs
+  visualization_msgs
+  nav_msgs
+  cv_bridge
+  cmake_modules)
 
 
 
@@ -34,23 +35,23 @@ find_package(catkin REQUIRED COMPONENTS
 
 # Declare that this catkin package's runtime dependencies
 catkin_package(CATKIN_DEPENDS 
-              roscpp 
-	      geometry_msgs  
-              sensor_msgs
-	      visualization_msgs
-              nav_msgs
-	      cv_bridge)
+  roscpp 
+  geometry_msgs  
+  sensor_msgs
+  visualization_msgs
+  nav_msgs
+  cv_bridge)
 
 catkin_package(
-   INCLUDE_DIRS include ${EIGEN_INCLUDE_DIR}
-   LIBRARIES 
-   CATKIN_DEPENDS 
-   DEPENDS Eigen)
+  INCLUDE_DIRS include ${EIGEN_INCLUDE_DIR}
+  LIBRARIES 
+  CATKIN_DEPENDS 
+  DEPENDS Eigen OpenCV)
 
 include_directories(include
-                    ${catkin_INCLUDE_DIRS}
-                    ${EIGEN_INCLUDE_DIR}
-                    ${INCLUDE_DIRS})
+  ${catkin_INCLUDE_DIRS}
+  ${EIGEN_INCLUDE_DIR}
+  ${INCLUDE_DIRS})
 
 #common commands for building c++ executables and libraries
 add_library(${PROJECT_NAME} src/utils.cc src/trans_utils.cc src/laser_utils.cc src/color_utils.cc)

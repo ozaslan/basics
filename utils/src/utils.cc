@@ -28,7 +28,7 @@ namespace utils{
 		//###[vs es] = eig(M);
 		cx_vec cx_eigval;
 		mat r_eigvec, l_eigvec, eigval;
-		eig_gen(cx_eigval, l_eigvec, r_eigvec, M);
+		// eig_gen(cx_eigval, l_eigvec, r_eigvec, M);
 		eigval = real(cx_eigval);
 		/*
 		   {
@@ -203,7 +203,7 @@ namespace utils{
 		cx_vec eigval;
 		//cx_mat r_eigvec, l_eigvec;
 		mat r_eigvec, l_eigvec;
-		eig_gen(eigval, l_eigvec, r_eigvec, M);
+		// eig_gen(eigval, l_eigvec, r_eigvec, M);
 		//eig_gen(eigval, l_eigvec, r_eigvec, M);
 		mat& eigvec = r_eigvec;
 		/*
